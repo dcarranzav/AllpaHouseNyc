@@ -43,7 +43,7 @@ class HabitacionesListAjaxView(View):
 
             page = int(request.GET.get("page", 1))
             # Permitir page_size desde la URL (máximo 1000 para evitar abusos)
-            page_size = min(int(request.GET.get("page_size", 20)), 1000)
+            page_size = min(int(request.GET.get("page_size", 20)), 1200)
 
             # Obtener todas las habitaciones con timeout para evitar cuelgues
             data = api.obtener_habitaciones()

@@ -755,7 +755,7 @@
         }
 
         // Si hay filtros, cargar TODAS las habitaciones y filtrar en cliente
-        $.get(URL_LIST + "?page=1&page_size=1000", function (resp) {
+        $.get(URL_LIST + "?page=1&page_size=1200", function (resp) {
             if (resp.status === "ok") {
                 ALL_HABITACIONES = resp.data || [];
             } else {

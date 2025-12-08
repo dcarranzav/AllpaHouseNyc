@@ -139,24 +139,25 @@ class ImagenHabitacionGestionSoap:
         except Exception as e:
             raise Exception(f"Error al eliminar imagen: {e}")
 
-    # ========================================================
+# ========================================================
     # ALIAS PARA COMPATIBILIDAD CON VIEWS DEL ADMIN
     # ========================================================
-    def crear_imagen(self, id_habitacion, url_imagen, estado=True):
+    def crear_imagen(self, id_habitacion, url_imagen, estado_imagen=True):
         dto = {
+            "IdImagenHabitacion": 0,  # 0 indica que es un nuevo registro
             "IdHabitacion": id_habitacion,
             "UrlImagen": url_imagen,
-            "EstadoImagen": estado,
+            "EstadoImagen": estado_imagen,
             "FechaModificacionImagenHabitacion": datetime.now().isoformat()
         }
         return self.crear(dto)
     
-    def actualizar_imagen(self, id_imagen, id_habitacion, url_imagen, estado=True):
+    def actualizar_imagen(self, id_imagen, id_habitacion, url_imagen, estado_imagen=True):
         dto = {
             "IdImagenHabitacion": id_imagen,
             "IdHabitacion": id_habitacion,
             "UrlImagen": url_imagen,
-            "EstadoImagen": estado,
+            "EstadoImagen": estado_imagen,
             "FechaModificacionImagenHabitacion": datetime.now().isoformat()
         }
         return self.actualizar(id_imagen, dto)

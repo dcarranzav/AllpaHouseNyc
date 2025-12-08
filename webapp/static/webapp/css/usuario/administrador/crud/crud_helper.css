@@ -30,7 +30,7 @@
     opacity: 0;
     transform: translateY(-20px);
     animation: toastFadeIn 0.4s forwards;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     cursor: pointer;
 }
 
@@ -38,20 +38,46 @@
     font-size: 18px;
 }
 
-.crud-toast-success { background: #28a745; }
-.crud-toast-error   { background: #dc3545; }
-.crud-toast-warning { background: #ffc107; color: #000; }
-.crud-toast-info    { background: #0dcaf0; }
+.crud-toast-success {
+    background: #28a745;
+}
+
+.crud-toast-error {
+    background: #dc3545;
+}
+
+.crud-toast-warning {
+    background: #ffc107;
+    color: #000;
+}
+
+.crud-toast-info {
+    background: #0dcaf0;
+}
 
 /* Animaciones toast */
 @keyframes toastFadeIn {
-    from { opacity: 0; transform: translateY(-20px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @keyframes toastFadeOut {
-    from { opacity: 1; transform: translateY(0); }
-    to   { opacity: 0; transform: translateY(-20px); }
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
 }
 
 /* ================== MODAL DE CONFIRMACIÓN ================== */
@@ -59,7 +85,7 @@
 .crud-confirm-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.45);
+    background: rgba(0, 0, 0, 0.45);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -77,7 +103,7 @@
     padding: 20px 24px;
     max-width: 380px;
     width: 100%;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
     text-align: center;
 }
 
@@ -99,24 +125,42 @@
 
 /* Animaciones confirm */
 @keyframes confirmFadeIn {
-    from { opacity: 0; transform: scale(0.95); }
-    to   { opacity: 1; transform: scale(1); }
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 @keyframes confirmFadeOut {
-    from { opacity: 1; transform: scale(1); }
-    to   { opacity: 0; transform: scale(0.95); }
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    to {
+        opacity: 0;
+        transform: scale(0.95);
+    }
 }
+
 .readonly-input {
     background-color: #f0f0f0 !important;
     color: #6c757d !important;
     cursor: not-allowed !important;
 }
+
 /* Centrar botones del modal de confirmación */
 .crud-confirm-actions {
     display: flex;
-    justify-content: center; /* 🔥 Centra horizontalmente */
-    gap: 15px;               /* Separación entre botones */
+    justify-content: center;
+    /* 🔥 Centra horizontalmente */
+    gap: 15px;
+    /* Separación entre botones */
     margin-top: 20px;
 }
 
@@ -124,6 +168,7 @@
 .crud-confirm-actions .btn {
     min-width: 120px;
 }
+
 /* CONTENEDOR DE LA LISTA AUTOCOMPLETE */
 .autocomplete-list {
     position: absolute;
@@ -134,7 +179,7 @@
     max-height: 220px;
     overflow-y: auto;
     z-index: 20000;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
 /* ITEM */
@@ -152,4 +197,18 @@
     padding: 10px 14px;
     text-align: center;
     color: #777;
+}
+
+/* ================== BOTONES DE TABLA (ALINEADOS) ================== */
+/* Forzar que todos los botones de acción tengan el mismo ancho */
+#tablaHabitaciones tbody .btn-sm,
+.table tbody .btn-sm {
+    min-width: 90px;
+    /* Ancho mínimo uniforme */
+    padding: 0.25rem 0.5rem;
+    /* Padding consistente */
+    text-align: center;
+    /* Texto centrado */
+    margin: 0 4px;
+    /* Separación entre botones */
 }
