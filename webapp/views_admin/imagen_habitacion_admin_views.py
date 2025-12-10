@@ -13,7 +13,7 @@ import uuid
 import boto3
 from django.conf import settings
 
-from servicios.soap.gestion.ImagenHabitacionGestionSoap import ImagenHabitacionGestionSoap
+from servicios.rest.gestion.ImagenHabitacionGestionRest import ImagenHabitacionGestionRest
 from webapp.decorators import admin_required, admin_required_ajax
 from django.core.files.uploadedfile import UploadedFile
 
@@ -38,7 +38,7 @@ class ImagenHabitacionListAjaxView(View):
         page = int(request.GET.get("page", 1))
         page_size = 20
 
-        api = ImagenHabitacionGestionSoap()
+        api = ImagenHabitacionGestionRest()
 
         try:
             data = api.obtener_imagenes() or []
@@ -103,7 +103,7 @@ class ImagenHabitacionListAjaxView(View):
 @method_decorator(admin_required_ajax, name="dispatch")
 class ImagenHabitacionGetAjaxView(View):
     def get(self, request, id_imagen):
-        api = ImagenHabitacionGestionSoap()
+        api = ImagenHabitacionGestionRest()
 
         try:
             data = api.obtener_imagen_por_id(int(id_imagen))
@@ -146,7 +146,7 @@ class ImagenHabitacionGetAjaxView(View):
 class ImagenHabitacionCreateAjaxView(View):
     def post(self, request):
 
-        api = ImagenHabitacionGestionSoap()
+        api = ImagenHabitacionGestionRest()
 
         try:
             id_habitacion = request.POST.get("IdHabitacion")
@@ -194,7 +194,7 @@ class ImagenHabitacionCreateAjaxView(View):
 class ImagenHabitacionUpdateAjaxView(View):
     def post(self, request, id_imagen):
 
-        api = ImagenHabitacionGestionSoap()
+        api = ImagenHabitacionGestionRest()
 
         try:
             id_habitacion = request.POST.get("IdHabitacion")
@@ -244,10 +244,11 @@ class ImagenHabitacionUpdateAjaxView(View):
 @method_decorator([csrf_exempt, admin_required_ajax], name="dispatch")
 class ImagenHabitacionDeleteAjaxView(View):
     def post(self, request, id_imagen):
-        api = ImagenHabitacionGestionSoap()
+        api = ImagenHabitacionGestionRest()
 
         try:
             result = api.eliminar_imagen(int(id_imagen))
+
             if result:
                 return JsonResponse(
                     {"status": "ok", "message": "Imagen eliminada exitosamente"}

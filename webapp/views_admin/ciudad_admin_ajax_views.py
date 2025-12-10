@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 
-from servicios.soap.gestion.CiudadGestionSoap import CiudadGestionSoap
+from servicios.rest.gestion.CiudadGestionRest import CiudadGestionRest
 from requests.exceptions import ConnectionError, Timeout, HTTPError
 
 from webapp.decorators import admin_required, admin_required_ajax
@@ -28,7 +28,7 @@ class CiudadView(View):
 @method_decorator(admin_required_ajax, name='dispatch')
 class CiudadListAjaxView(View):
     def get(self, request):
-        api = CiudadGestionSoap()
+        api = CiudadGestionRest()
 
         try:
             data = api.obtener_ciudades()
@@ -64,7 +64,7 @@ class CiudadListAjaxView(View):
 @method_decorator(admin_required_ajax, name='dispatch')
 class CiudadGetAjaxView(View):
     def get(self, request, id_ciudad):
-        api = CiudadGestionSoap()
+        api = CiudadGestionRest()
 
         try:
             data = api.obtener_ciudad_por_id(id_ciudad)
@@ -98,7 +98,7 @@ class CiudadCreateAjaxView(View):
             if not nombre:
                 return JsonResponse({"status": "error", "message": "Nombre Ciudad es requerido"}, status=400)
 
-            api = CiudadGestionSoap()
+            api = CiudadGestionRest()
             api.crear_ciudad(int(idCiudad), int(idPais), nombre, estado)
 
             return JsonResponse({"status": "ok", "message": "Ciudad creada exitosamente"})
@@ -128,7 +128,7 @@ class CiudadUpdateAjaxView(View):
             if not nombre:
                 return JsonResponse({"status": "error", "message": "Nombre Ciudad es requerido"}, status=400)
 
-            api = CiudadGestionSoap()
+            api = CiudadGestionRest()
 
             # Obtener estado actual si no se envía
             if estado_enviado is None:
@@ -155,7 +155,7 @@ class CiudadUpdateAjaxView(View):
 @method_decorator([csrf_exempt, admin_required_ajax], name='dispatch')
 class CiudadDeleteAjaxView(View):
     def post(self, request, id_ciudad):
-        api = CiudadGestionSoap()
+        api = CiudadGestionRest()
 
         try:
             api.eliminar_ciudad(id_ciudad)

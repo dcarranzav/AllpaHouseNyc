@@ -7,7 +7,7 @@ from django.utils.decorators import method_decorator
 import requests
 from requests.exceptions import ConnectionError, Timeout, HTTPError
 from utils.s3_upload import subir_pdf_a_s3
-from servicios.soap.gestion.PdfGestionSoap import PdfGestionSoap
+from servicios.rest.gestion.PdfGestionRest import PdfGestionRest
 from webapp.decorators import admin_required, admin_required_ajax
 import os
 import uuid
@@ -33,7 +33,7 @@ class PdfListAjaxView(View):
         page = int(request.GET.get("page", 1))
         page_size = 20
 
-        api = PdfGestionSoap()
+        api = PdfGestionRest()
 
         try:
             data = api.obtener_pdfs()
@@ -69,7 +69,7 @@ class PdfListAjaxView(View):
 @method_decorator(admin_required_ajax, name='dispatch')
 class PdfGetAjaxView(View):
     def get(self, request, id_pdf):
-        api = PdfGestionSoap()
+        api = PdfGestionRest()
         try:
             data = api.obtener_pdf_por_id(id_pdf)
             return JsonResponse({"status": "ok", "data": data})
@@ -89,7 +89,7 @@ class PdfGetAjaxView(View):
 @method_decorator([csrf_exempt, admin_required_ajax], name='dispatch')
 class PdfCreateAjaxView(View):
     def post(self, request):
-        api = PdfGestionSoap()
+        api = PdfGestionRest()
 
         try:
             api.crear_pdf(
@@ -117,7 +117,7 @@ class PdfCreateAjaxView(View):
 @method_decorator([csrf_exempt, admin_required_ajax], name='dispatch')
 class PdfUpdateAjaxView(View):
     def post(self, request, id_pdf):
-        api = PdfGestionSoap()
+        api = PdfGestionRest()
 
         try:
             # Obtener el estado actual del registro si no se envía
@@ -154,7 +154,7 @@ class PdfUpdateAjaxView(View):
 @method_decorator([csrf_exempt, admin_required_ajax], name='dispatch')
 class PdfDeleteAjaxView(View):
     def post(self, request, id_pdf):
-        api = PdfGestionSoap()
+        api = PdfGestionRest()
 
         try:
             api.eliminar_pdf(id_pdf)
@@ -227,7 +227,7 @@ class PdfNextIdAjaxView(View):
     -> { "next": 118 }
     """
     def get(self, request):
-        api = PdfGestionSoap()
+        api = PdfGestionRest()
         try:
             data = api.obtener_pdfs() or []
 

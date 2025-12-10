@@ -8,18 +8,18 @@ import requests
 from requests.exceptions import ConnectionError, Timeout, HTTPError
 
 
-from servicios.soap.gestion.HabxResGestionSoap import HabxResGestionSoap
+from servicios.rest.gestion.HabxResGestionRest import HabxResGestionRest
 from webapp.decorators import admin_required, admin_required_ajax
 
 from django.views import View
 from django.http import JsonResponse
-from servicios.soap.gestion.HabxResGestionSoap import HabxResGestionSoap
+from servicios.rest.gestion.HabxResGestionRest import HabxResGestionRest
 
 class HabxResSearchAjaxView(View):
     def get(self, request):
         q = request.GET.get("q", "").strip().upper()
 
-        api = HabxResGestionSoap()
+        api = HabxResGestionRest()
 
         try:
             registros = api.obtener_habxres()
@@ -59,7 +59,7 @@ class HabxResView(View):
 @method_decorator(admin_required_ajax, name='dispatch')
 class HabxResListAjaxView(View):
     def get(self, request):
-        api = HabxResGestionSoap()
+        api = HabxResGestionRest()
         try:
             data = api.obtener_habxres()
 
@@ -93,7 +93,7 @@ class HabxResListAjaxView(View):
 @method_decorator(admin_required_ajax, name='dispatch')
 class HabxResGetAjaxView(View):
     def get(self, request, id_habxres):
-        api = HabxResGestionSoap()
+        api = HabxResGestionRest()
         try:
             data = api.obtener_por_id(int(id_habxres))
             return JsonResponse({"status": "ok", "data": data})
@@ -110,7 +110,7 @@ class HabxResGetAjaxView(View):
 @method_decorator([csrf_exempt, admin_required_ajax], name='dispatch')
 class HabxResCreateAjaxView(View):
     def post(self, request):
-        api = HabxResGestionSoap()
+        api = HabxResGestionRest()
 
         try:
             idHabxRes = int(request.POST.get("IdHabxRes"))
@@ -160,7 +160,7 @@ class HabxResCreateAjaxView(View):
 @method_decorator([csrf_exempt, admin_required_ajax], name='dispatch')
 class HabxResUpdateAjaxView(View):
     def post(self, request, id_habxres):
-        api = HabxResGestionSoap()
+        api = HabxResGestionRest()
 
         try:
             idHabxRes = int(id_habxres)
@@ -217,7 +217,7 @@ class HabxResUpdateAjaxView(View):
 @method_decorator([csrf_exempt, admin_required_ajax], name='dispatch')
 class HabxResDeleteAjaxView(View):
     def post(self, request, id_habxres):
-        api = HabxResGestionSoap()
+        api = HabxResGestionRest()
         try:
             api.eliminar_habxres(int(id_habxres))
             return JsonResponse({"status": "ok", "message": "Habitación por Reserva eliminado exitosamente"})
@@ -232,7 +232,7 @@ class HabxResDeleteAjaxView(View):
 class HabxResNextIdAjaxView(View):
 
     def get(self, request):
-        api = HabxResGestionSoap()
+        api = HabxResGestionRest()
 
         try:
             data = api.obtener_habxres()

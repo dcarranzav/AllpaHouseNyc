@@ -11,7 +11,7 @@ class HabxResGestionRest:
     Equivalente al controlador HabxResGestionController en C#.
 
     BASE:
-    http://aureacuengr.runasp.net/api/gestion/habxres
+    
     """
 
     BASE_URL = "http://allphahousenycrg.runasp.net/api/gestion/habxres"

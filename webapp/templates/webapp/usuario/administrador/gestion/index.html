@@ -3,50 +3,139 @@
 {% block bloquear_footer %}
 {% endblock %}
 {% block titulo_pagina %}
-<title>Panel Administrador | Hotel AureaCuen - Cuenca</title>
+<title>Panel Administrador | AllpaHouseNYC</title>
 {% endblock %}
 
 {% block css_archivos %}
-<style>
-    :root {
-        --color-principal: #2f5d50;
-        --color-secundario: #436e62;
-        --color-accent: #2f5d50;
-        --degradado: linear-gradient(135deg, #436e62 0%, #2f5d50 100%);
-    }
+<link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap"
+    rel="stylesheet">
 
+<style>
     body {
-        background: #f5f7fb;
+        background: #f1f5f9;
+        font-family: 'Inter', sans-serif;
     }
 
     .admin-wrapper {
-        max-width: 1200px;
-        margin: auto;
-        padding: 2rem;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 3rem 2rem;
+    }
+
+    .dashboard-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .dashboard-header h2 {
+        font-family: 'Poppins', sans-serif;
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 0.5rem;
+    }
+
+    .dashboard-header h2 i {
+        color: #6366f1;
+    }
+
+    .dashboard-subtitle {
+        color: #64748b;
+        font-size: 1.125rem;
     }
 
     .card-admin {
-        border-radius: 1rem;
-        padding: 1.8rem;
-        background: #fff;
-        transition: 0.2s;
+        background: white;
+        border-radius: 16px;
+        padding: 2rem;
+        border: 1px solid #e2e8f0;
+        transition: all 0.3s ease;
+        text-align: center;
         height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .card-admin::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%);
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+        border-radius: 16px 16px 0 0;
+    }
+
+    .card-admin {
+        position: relative;
     }
 
     .card-admin:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 12px 25px rgba(0,0,0,0.12);
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(99, 102, 241, 0.15);
+        border-color: #6366f1;
+    }
+
+    .card-admin:hover::before {
+        transform: scaleX(1);
     }
 
     .admin-icon {
-        font-size: 2.8rem;
-        color: var(--color-accent);
+        width: 64px;
+        height: 64px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+        background: #f1f5f9;
+        color: #6366f1;
         transition: all 0.3s ease;
     }
-    
+
     .card-admin:hover .admin-icon {
-        color: var(--color-secundario);
+        background: #6366f1;
+        color: white;
         transform: scale(1.1);
+    }
+
+    .card-admin h5 {
+        font-family: 'Poppins', sans-serif;
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin: 0.75rem 0 0.5rem 0;
+    }
+
+    .card-admin p {
+        font-size: 0.875rem;
+        color: #64748b;
+        margin: 0;
+    }
+
+    a {
+        text-decoration: none !important;
+    }
+
+    @media (max-width: 768px) {
+        .admin-wrapper {
+            padding: 2rem 1rem;
+        }
+
+        .dashboard-header h2 {
+            font-size: 2rem;
+        }
+
+        .card-admin {
+            padding: 1.5rem;
+        }
     }
 </style>
 {% endblock %}
@@ -55,9 +144,12 @@
 
 <section class="admin-wrapper">
 
-    <h2 class="fw-bold mb-4 text-center">
-        <i class="bi bi-gear-fill text-primary"></i> Panel de Administración
-    </h2>
+    <div class="dashboard-header">
+        <h2>
+            <i class="bi bi-gear-fill"></i> Panel de Administración
+        </h2>
+        <p class="dashboard-subtitle">Gestiona todos los aspectos de tu hotel desde un solo lugar</p>
+    </div>
 
     <div class="row g-4">
 

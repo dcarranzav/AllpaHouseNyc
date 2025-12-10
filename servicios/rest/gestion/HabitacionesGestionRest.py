@@ -11,7 +11,7 @@ class HabitacionesGestionRest:
     Equivale a HabitacionesGestionController en C#.
 
     BASE:
-    http://aureacuengr.runasp.net/api/gestion/habitaciones
+    
     """
 
     BASE_URL = "http://allphahousenycrg.runasp.net/api/gestion/habitaciones"

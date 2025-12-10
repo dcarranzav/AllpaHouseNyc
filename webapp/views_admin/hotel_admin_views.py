@@ -8,7 +8,7 @@ import requests
 from requests.exceptions import ConnectionError, Timeout, HTTPError
 
 
-from servicios.soap.gestion.HotelGestionSoap import HotelGestionSoap
+from servicios.rest.gestion.HotelGestionRest import HotelGestionRest
 from webapp.decorators import admin_required, admin_required_ajax
 
 
@@ -32,7 +32,7 @@ class HotelListAjaxView(View):
         page = int(request.GET.get("page", 1))
         page_size = 20
 
-        api = HotelGestionSoap()
+        api = HotelGestionRest()
 
         try:
             data = api.obtener_hoteles()
@@ -68,7 +68,7 @@ class HotelListAjaxView(View):
 @method_decorator(admin_required_ajax, name='dispatch')
 class HotelGetAjaxView(View):
     def get(self, request, id_hotel):
-        api = HotelGestionSoap()
+        api = HotelGestionRest()
 
         try:
             data = api.obtener_hotel_por_id(int(id_hotel))
@@ -100,7 +100,7 @@ class HotelCreateAjaxView(View):
             if not nombre_hotel:
                 return JsonResponse({"status": "error", "message": "Nombre del Hotel es requerido"}, status=400)
 
-            api = HotelGestionSoap()
+            api = HotelGestionRest()
             api.crear_hotel(
                 id_hotel=int(id_hotel),
                 nombre_hotel=nombre_hotel,
@@ -133,7 +133,7 @@ class HotelUpdateAjaxView(View):
             if not nombre_hotel:
                 return JsonResponse({"status": "error", "message": "Nombre del Hotel es requerido"}, status=400)
 
-            api = HotelGestionSoap()
+            api = HotelGestionRest()
             
             # Obtener el estado actual del registro si no se envía
             estado_enviado = request.POST.get("EstadoHotel")
@@ -170,7 +170,7 @@ class HotelUpdateAjaxView(View):
 class HotelDeleteAjaxView(View):
     def post(self, request, id_hotel):
 
-        api = HotelGestionSoap()
+        api = HotelGestionRest()
 
         try:
             api.eliminar_hotel(int(id_hotel))
@@ -191,7 +191,7 @@ class HotelDeleteAjaxView(View):
 @method_decorator(admin_required_ajax, name='dispatch')
 class HotelNextIdAjaxView(View):
     def get(self, request):
-        api = HotelGestionSoap()
+        api = HotelGestionRest()
         try:
             # Traemos todos los hoteles
             hoteles = api.obtener_hoteles() or []

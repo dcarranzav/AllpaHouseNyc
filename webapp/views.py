@@ -7,31 +7,30 @@ from django.views import View
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 from datetime import datetime
-from servicios.soap.gestion.HoldGestionSoap import HoldGestionSoap
-from servicios.soap.integracion.HabitacionesSoap import HabitacionesSoap
-from servicios.soap.gestion.TipoHabitacionGestionSoap import TipoHabitacionGestionSoap
-from servicios.soap.gestion.AmexHabGestionSoap import AmexHabGestionSoap
-from servicios.soap.gestion.AmenidadGestionSoap import AmenidadGestionSoap
+from servicios.rest.gestion.HoldGestionRest import HoldGestionRest
+from servicios.rest.gestion.TipoHabitacionGestionRest import TipoHabitacionGestionRest
+from servicios.rest.gestion.AmexHabGestionRest import AmexHabGestionRest
+from servicios.rest.gestion.AmenidadesGestionRest import AmenidadesGestionRest
 from pprint import pprint
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.views import View
-from servicios.soap.gestion.UsuarioInternoGestionSoap import UsuarioInternoGestionSoap
+from servicios.rest.gestion.UsuarioInternoGestionRest import UsuarioInternoGestionRest
 from django.shortcuts import render, redirect
 from servicios.rest.gestion.PagoGestionRest import PagoGestionRest
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.shortcuts import render, redirect
-from servicios.soap.gestion.UsuarioInternoGestionSoap import UsuarioInternoGestionSoap
-from servicios.soap.gestion.FuncionesEspecialesGestionSoap import FuncionesEspecialesGestionSoap
+from servicios.rest.gestion.UsuarioInternoGestionRest import UsuarioInternoGestionRest
+from servicios.rest.gestion.FuncionesEspecialesGestionRest import FuncionesEspecialesGestionRest
 import threading
 import time
-from servicios.soap.gestion.FacturaGestionSoap import FacturaGestionSoap
-from servicios.soap.gestion.PdfGestionSoap import PdfGestionSoap
-from servicios.soap.gestion.HabxResGestionSoap import HabxResGestionSoap
-from servicios.soap.gestion.HabitacionGestionSoap import HabitacionGestionSoap
-from servicios.soap.gestion.ReservaGestionSoap import ReservaGestionSoap
-from servicios.soap.gestion.ImagenHabitacionGestionSoap import ImagenHabitacionGestionSoap
+from servicios.rest.gestion.FacturasGestionRest import FacturasGestionRest
+from servicios.rest.gestion.PdfGestionRest import PdfGestionRest
+from servicios.rest.gestion.HabxResGestionRest import HabxResGestionRest
+from servicios.rest.gestion.HabitacionesGestionRest import HabitacionesGestionRest
+from servicios.rest.gestion.ReservaGestionRest import ReservaGestionRest
+from servicios.rest.gestion.ImagenHabitacionGestionRest import ImagenHabitacionGestionRest
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 
@@ -51,7 +50,7 @@ class HabitacionesView(View):
     def get(self, request):
 
         # Cargar tipos de habitación
-        cliente_tipos = TipoHabitacionGestionSoap()
+        cliente_tipos = TipoHabitacionGestionRest()
         tipos = cliente_tipos.obtener_tipos()
 
         return render(request, self.template_name, {
@@ -107,35 +106,81 @@ class HabitacionesAjaxView(View):
                 "amex_list": None,
                 "amenidades_data": None,
                 "tipos_list": None,
+                "imagenes_list": None,
+                "hoteles_list": None,    # ← NUEVO: hoteles
+                "ciudades_list": None,   # ← NUEVO: ciudades
             }
 
             # Funciones para ejecutar en threads
             def cargar_buscar():
-                cliente = HabitacionesSoap()
-                datos["habitaciones_all"] = cliente.buscar_habitaciones(
-                    date_from=date_from,
-                    date_to=date_to,
-                    tipo_habitacion=tipo_habitacion,
-                    capacidad=int(capacidad) if capacidad else None,
-                    precio_min=float(precio_min) if precio_min else None,
-                    precio_max=float(precio_max) if precio_max else None,
-                )
+                # Usar REST en lugar de SOAP
+                cliente = HabitacionesGestionRest()
+                todas_habs = cliente.obtener_habitaciones() or []
+                
+                # Aplicar filtros manualmente en Python
+                habitaciones_filtradas = todas_habs
+                
+                # Filtrar por tipo de habitación
+                if tipo_habitacion:
+                    habitaciones_filtradas = [
+                        h for h in habitaciones_filtradas 
+                        if h.get("NombreTipoHabitacion", "").lower() == tipo_habitacion.lower()
+                    ]
+                
+                # Filtrar por capacidad
+                if capacidad:
+                    habitaciones_filtradas = [
+                        h for h in habitaciones_filtradas 
+                        if h.get("CapacidadHabitacion", 0) >= int(capacidad)
+                    ]
+                
+                # Filtrar por precio
+                if precio_min:
+                    habitaciones_filtradas = [
+                        h for h in habitaciones_filtradas 
+                        if h.get("PrecioActualHabitacion", 0) >= float(precio_min)
+                    ]
+                
+                if precio_max:
+                    habitaciones_filtradas = [
+                        h for h in habitaciones_filtradas 
+                        if h.get("PrecioActualHabitacion", 0) <= float(precio_max)
+                    ]
+                
+                # Nota: El filtrado por fechas requeriría consultar disponibilidad,
+                # por ahora devolvemos todas las que cumplan los otros criterios
+                datos["habitaciones_all"] = habitaciones_filtradas
+
 
             def cargar_habitaciones():
-                api_habs = HabitacionGestionSoap()
+                api_habs = HabitacionesGestionRest()
                 datos["todas_habitaciones"] = api_habs.obtener_habitaciones()
 
             def cargar_amexhab():
-                amex_rest = AmexHabGestionSoap()
+                amex_rest = AmexHabGestionRest()
                 datos["amex_list"] = amex_rest.obtener_amexhab()
 
             def cargar_amenidades():
-                amen_rest = AmenidadGestionSoap()
+                amen_rest = AmenidadesGestionRest()
                 datos["amenidades_data"] = amen_rest.obtener_amenidades()
 
             def cargar_tipos():
-                tipos_rest = TipoHabitacionGestionSoap()
+                tipos_rest = TipoHabitacionGestionRest()
                 datos["tipos_list"] = tipos_rest.obtener_tipos()
+
+            def cargar_imagenes():
+                imgs_rest = ImagenHabitacionGestionRest()
+                datos["imagenes_list"] = imgs_rest.obtener_imagenes()
+
+            def cargar_hoteles():
+                from servicios.rest.gestion.HotelGestionRest import HotelGestionRest
+                hoteles_rest = HotelGestionRest()
+                datos["hoteles_list"] = hoteles_rest.obtener_hoteles()
+
+            def cargar_ciudades():
+                from servicios.rest.gestion.CiudadGestionRest import CiudadGestionRest
+                ciudades_rest = CiudadGestionRest()
+                datos["ciudades_list"] = ciudades_rest.obtener_ciudades()
 
             # Crear threads para cargas paralelas
             threads = [
@@ -144,6 +189,9 @@ class HabitacionesAjaxView(View):
                 threading.Thread(target=cargar_amexhab),
                 threading.Thread(target=cargar_amenidades),
                 threading.Thread(target=cargar_tipos),
+                threading.Thread(target=cargar_imagenes),
+                threading.Thread(target=cargar_hoteles),   # ← NUEVO
+                threading.Thread(target=cargar_ciudades),  # ← NUEVO
             ]
 
             # Iniciar todos los threads
@@ -163,6 +211,9 @@ class HabitacionesAjaxView(View):
             amex_list = datos["amex_list"]
             amenidades_data = datos["amenidades_data"]
             tipos_list = datos["tipos_list"]
+            imagenes_list = datos["imagenes_list"] or []
+            hoteles_list = datos["hoteles_list"] or []     # ← NUEVO
+            ciudades_list = datos["ciudades_list"] or []   # ← NUEVO
 
             total = len(habitaciones_all)
 
@@ -188,11 +239,26 @@ class HabitacionesAjaxView(View):
             amen_index = {a["IdAmenidad"]: a["NombreAmenidad"] for a in amenidades_data}
 
             idx_tipos = {t["IdTipoHabitacion"]: t for t in tipos_list}
+            
+            # ← NUEVO: Índices de hoteles y ciudades
+            idx_hoteles = {h["IdHotel"]: h["NombreHotel"] for h in hoteles_list}
+            idx_ciudades = {c["IdCiudad"]: c["NombreCiudad"] for c in ciudades_list}
+            
+            # ← NUEVO: Índice de imágenes por habitación
+            imgs_index = {}
+            for img in imagenes_list:
+                id_hab = img.get("IdHabitacion")
+                url_img = img.get("UrlImagen")  # ← CORREGIDO: el servicio retorna "UrlImagen"
+                if id_hab and url_img:
+                    if id_hab not in imgs_index:
+                        imgs_index[id_hab] = []
+                    imgs_index[id_hab].append(url_img)
 
             resultado = []
 
             for h in habitaciones_slice:
-                hid = h.get("idHabitacion")
+                # REST retorna con PascalCase, no camelCase
+                hid = h.get("IdHabitacion") or h.get("idHabitacion")
 
                 # Usar índice en lugar de llamar API
                 detalle = hab_index.get(hid)
@@ -208,18 +274,36 @@ class HabitacionesAjaxView(View):
                 ids_amen = amex_index.get(hid, [])
                 nombres_amenidades = [amen_index.get(aid, "Amenidad desconocida") for aid in ids_amen]
 
-                # Imagen
-                raw_img = h.get("imagenes") or ""
-                imagen_principal = raw_img.split("|")[0].strip() if "|" in raw_img else raw_img.strip()
+                # ← MEJORADO: Imagen - Priorizar imágenes del servicio REST (panel admin)
+                imagen_principal = None
+                
+                # 1. Intentar obtener imagen desde el servicio REST (que usa el panel admin)
+                imagenes_rest = imgs_index.get(hid, [])
+                if imagenes_rest and len(imagenes_rest) > 0:
+                    imagen_principal = imagenes_rest[0]  # Primera imagen de la habitación
+                
+                # 2. Si no hay imágenes en REST, usar la del SOAP (legacy)
+                if not imagen_principal:
+                    raw_img = h.get("imagenes") or ""
+                    imagen_principal = raw_img.split("|")[0].strip() if "|" in raw_img else raw_img.strip()
+                
+                # 3. Si aún no hay imagen, usar la por defecto
                 if not imagen_principal:
                     imagen_principal = "https://imageness3realdecuenca.s3.us-east-2.amazonaws.com/Imagen4.png"
 
+                # Obtener nombres de hotel y ciudad desde los índices
+                id_hotel = detalle.get("IdHotel")
+                id_ciudad = detalle.get("IdCiudad")
+                
+                nombre_hotel = idx_hoteles.get(id_hotel, "Hotel desconocido")
+                nombre_ciudad = idx_ciudades.get(id_ciudad, "Ciudad desconocida")
+                
                 item = {
                     "id": hid,
                     "nombre": detalle.get("NombreHabitacion"),
-                    "hotel": detalle.get("NombreHotel") or h.get("nombreHotel"),
-                    "ubicacion": detalle.get("NombreCiudad") or h.get("nombreCiudad"),
-                    "precio": detalle.get("PrecioActualHabitacion") or h.get("precioVigente"),
+                    "hotel": nombre_hotel,
+                    "ubicacion": nombre_ciudad,
+                    "precio": detalle.get("PrecioActualHabitacion"),
                     "imagen": imagen_principal,
                     "amenidades": nombres_amenidades,
                     "capacidad": capacidad_real,
@@ -264,15 +348,16 @@ def detalle_habitacion(request, id):
     }
 
     def cargar_habitaciones():
-        cliente = HabitacionesSoap()
-        datos["habitaciones"] = cliente.buscar_habitaciones()
+        # Usar REST en lugar de SOAP
+        cliente = HabitacionesGestionRest()
+        datos["habitaciones"] = cliente.obtener_habitaciones()
 
     def cargar_amexhab():
-        amex_rest = AmexHabGestionSoap()
+        amex_rest = AmexHabGestionRest()
         datos["amex_list"] = amex_rest.obtener_amexhab()
 
     def cargar_amenidades():
-        amen_rest = AmenidadGestionSoap()
+        amen_rest = AmenidadesGestionRest()
         datos["amenidades_data"] = amen_rest.obtener_amenidades()
 
     # Crear threads
@@ -300,8 +385,8 @@ def detalle_habitacion(request, id):
     amex_list = datos["amex_list"]
     amenidades_data = datos["amenidades_data"]
 
-    # Buscar la habitación con el ID proporcionado
-    habitacion = next((h for h in habitaciones if h.get("idHabitacion") == id), None)
+    # Buscar la habitación con el ID proporcionado (REST usa PascalCase)
+    habitacion = next((h for h in habitaciones if h.get("IdHabitacion") == id), None)
 
     if not habitacion:
         # Si no se encuentra la habitación
@@ -337,14 +422,14 @@ def detalle_habitacion(request, id):
     # Armar contexto
     # ==============================
     contexto = {
-        "id": habitacion.get("idHabitacion"),
-        "nombre": habitacion.get("nombreHabitacion") or "Habitación",
-        "hotel": habitacion.get("nombreHotel") or "Hotel desconocido",
-        "ubicacion": habitacion.get("nombreCiudad") or "Ubicación no disponible",
-        "pais": habitacion.get("nombrePais") or "No disponible",
-        "tipo": habitacion.get("tipoHabitacion") or "N/A",
-        "capacidad": habitacion.get("capacidad") or 0,
-        "precio": habitacion.get("precioVigente") or habitacion.get("precioActual") or 0,
+        "id": habitacion.get("IdHabitacion"),
+        "nombre": habitacion.get("NombreHabitacion") or "Habitación",
+        "hotel": habitacion.get("NombreHotel") or "Hotel desconocido",
+        "ubicacion": habitacion.get("NombreCiudad") or "Ubicación no disponible",
+        "pais": habitacion.get("NombrePais") or "No disponible",
+        "tipo": habitacion.get("NombreTipoHabitacion") or "N/A",
+        "capacidad": habitacion.get("CapacidadHabitacion") or 0,
+        "precio": habitacion.get("PrecioActualHabitacion") or 0,
 
         "imagenes": imagen_lista,
         "imagen_principal": imagen_principal,
@@ -375,8 +460,8 @@ class FechasOcupadasAjaxView(View):
             expirar_holds_sync()  # Se ejecuta completamente (bloquea, pero es crítico)
             
             # Obtener todas las reservas
-            api_reserva = ReservaGestionSoap()
-            api_habxres = HabxResGestionSoap()
+            api_reserva = ReservaGestionRest()
+            api_habxres = HabxResGestionRest()
             
             reservas_api = api_reserva.obtener_reservas()
             habxres_list = api_habxres.obtener_habxres()
@@ -489,7 +574,7 @@ def crear_prereserva(request):
         return JsonResponse({"error": "ID de usuario inválido"}, status=400)
 
     # === Llamar al servicio SOAP ===
-    api = FuncionesEspecialesGestionSoap()
+    api = FuncionesEspecialesGestionRest()
 
     try:
         # 1) Crear Pre-reserva
@@ -525,7 +610,7 @@ def crear_prereserva(request):
                 }, status=500)
         else:
             # 2) Obtener información extendida del HOLD usando el ID
-            hold_api = HoldGestionSoap()
+            hold_api = HoldGestionRest()
             try:
                 hold = hold_api.obtener_hold_por_id(str(hold_id))
                 
@@ -590,7 +675,7 @@ def login_post(request):
     correo = request.POST.get("correo")
     clave = request.POST.get("clave")
 
-    api = UsuarioInternoGestionSoap()
+    api = UsuarioInternoGestionRest()
 
     try:
         respuesta = api.login(correo, clave)
@@ -643,9 +728,20 @@ def login_post(request):
 
         return response
 
+
     except Exception as e:
-        messages.error(request, f"Error con el servidor: {e}")
+        # Detectar el tipo de error y mostrar mensaje apropiado
+        error_msg = str(e).lower()
+        
+        if "401" in error_msg or "unauthorized" in error_msg or "credenciales" in error_msg:
+            messages.error(request, "Correo o contraseña incorrectos. Por favor, verifica tus credenciales e intenta nuevamente.")
+        elif "conexión" in error_msg or "connection" in error_msg:
+            messages.error(request, "No se pudo conectar al servidor. Verifica tu conexión a internet.")
+        else:
+            messages.error(request, "No se pudo iniciar sesión. Por favor, intenta nuevamente.")
+        
         return redirect("login")
+
 
 
 def index_register(request):
@@ -675,7 +771,7 @@ def register_post(request):
         "FechaNacimiento": None,
     }
 
-    api = UsuarioInternoGestionSoap()
+    api = UsuarioInternoGestionRest()
 
     try:
         nuevo = api.crear(payload)
@@ -704,11 +800,11 @@ class MisReservasView(View):
         import time
         start_time = time.time()
 
-        api_reserva = ReservaGestionSoap()
-        api_habxres = HabxResGestionSoap()
-        api_habs = HabitacionGestionSoap()
-        api_imgs = ImagenHabitacionGestionSoap()
-        api_hold = HoldGestionSoap()
+        api_reserva = ReservaGestionRest()
+        api_habxres = HabxResGestionRest()
+        api_habs = HabitacionesGestionRest()
+        api_imgs = ImagenHabitacionGestionRest()
+        api_hold = HoldGestionRest()
 
         usuario_id = request.GET.get("uid")
         usuario_correo = None  # Django NO tiene acceso a localStorage
@@ -1134,7 +1230,7 @@ class ConfirmarReservaInternaAjax(View):
                 print(f"[WARN ConfirmarReserva] No se pudo obtener capacidad de la habitación: {e}")
 
             # 1) Obtener datos del usuario desde el API
-            api_usuario = UsuarioInternoGestionSoap()
+            api_usuario = UsuarioInternoGestionRest()
             try:
                 usuario_data = api_usuario.obtener_por_id(id_usuario)
                 print(f"[DEBUG ConfirmarReserva] Datos del usuario obtenidos: {usuario_data}")
@@ -1314,7 +1410,7 @@ class CancelarReservaAjax(View):
                 # Si no, buscar el HOLD por idReserva
                 print(f"[DEBUG CancelarReserva] Buscando HOLD para reserva {id_reserva}")
 
-                api_hold = HoldGestionSoap()
+                api_hold = HoldGestionRest()
                 try:
                     holds = api_hold.obtener_hold()
                 except Exception as e:
@@ -1427,8 +1523,8 @@ def mis_pagos(request):
         })
 
     api_pagos = PagoGestionRest()
-    api_facturas = FacturaGestionSoap()
-    api_pdf = PdfGestionSoap()
+    api_facturas = FacturasGestionRest()
+    api_pdf = PdfGestionRest()
 
     # OPTIMIZACIÓN: Cargar datos en paralelo
     datos = {
@@ -1478,7 +1574,7 @@ def mis_pagos(request):
             pdf_por_factura[fid] = p
 
     # Obtener datos del usuario para pre-llenar el formulario de factura
-    api_usuario = UsuarioInternoGestionSoap()
+    api_usuario = UsuarioInternoGestionRest()
     usuario_data = None
     try:
         usuario_data = api_usuario.obtener_por_id(usuario_id)
@@ -1544,7 +1640,7 @@ def mis_pagos(request):
     print(f"[PERF] mis_pagos: {elapsed:.2f}s")
 
     # Obtener datos del usuario para pre-llenar el formulario de factura
-    api_usuario = UsuarioInternoGestionSoap()
+    api_usuario = UsuarioInternoGestionRest()
     usuario_data = None
     try:
         usuario_data = api_usuario.obtener_por_id(usuario_id)
@@ -1688,7 +1784,7 @@ def generar_pdf_reserva(request):
         print(f"[DEBUG generar_pdf_reserva] Generando PDF para factura {factura_id_int}")
         
         # Obtener datos de la factura
-        api_facturas = FacturaGestionSoap()
+        api_facturas = FacturasGestionRest()
         factura = api_facturas.obtener_factura_por_id(factura_id_int)
         
         if not factura:
@@ -1720,7 +1816,7 @@ def generar_pdf_reserva(request):
         print(f"[DEBUG generar_pdf_reserva] PDF generado y subido a: {url_pdf_final}")
         
         # Actualizar o crear el registro en la tabla PDF
-        api_pdf = PdfGestionSoap()
+        api_pdf = PdfGestionRest()
         try:
             # Buscar si ya existe un PDF para esta factura
             pdfs = api_pdf.obtener_pdfs()

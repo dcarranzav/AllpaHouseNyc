@@ -13,7 +13,7 @@ class PdfGestionRest:
     Equivalente al controlador PdfGestionController en C#.
 
     URL base:
-    http://aureacuengr.runasp.net/api/gestion/pdf
+    
     """
 
     BASE_URL = "http://allphahousenycrg.runasp.net/api/gestion/pdf"

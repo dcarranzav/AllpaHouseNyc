@@ -4,7 +4,7 @@ from webapp.decorators import admin_required, admin_required_ajax
 from django.http import JsonResponse
 from django.views import View
 from django.utils.decorators import method_decorator
-from servicios.soap.gestion.MetodoPagoGestionSoap import MetodoPagoGestionSoap
+from servicios.rest.gestion.MetodoPagoGestionRest import MetodoPagoGestionRest
 from webapp.decorators import admin_required_ajax
 
 # ============================================================
@@ -27,7 +27,7 @@ class MetodoPagoListAjaxView(View):
         page = int(request.GET.get("page", 1))
         page_size = 20
 
-        api = MetodoPagoGestionSoap()
+        api = MetodoPagoGestionRest()
 
         try:
             data = api.obtener_metodos_pago()
@@ -57,7 +57,7 @@ class MetodoPagoListAjaxView(View):
 @method_decorator(admin_required_ajax, name='dispatch')
 class MetodoPagoGetAjaxView(View):
     def get(self, request, id_metodo):
-        api = MetodoPagoGestionSoap()
+        api = MetodoPagoGestionRest()
         try:
             data = api.obtener_metodo_pago_por_id(int(id_metodo))
             return JsonResponse({"status": "ok", "data": data})
@@ -74,7 +74,7 @@ class MetodoPagoGetAjaxView(View):
 @method_decorator([csrf_exempt, admin_required_ajax], name='dispatch')
 class MetodoPagoCreateAjaxView(View):
     def post(self, request):
-        api = MetodoPagoGestionSoap()
+        api = MetodoPagoGestionRest()
         try:
             api.crear_metodo_pago(
                 id_metodo=int(request.POST.get("IdMetodoPago")),
@@ -95,7 +95,7 @@ class MetodoPagoCreateAjaxView(View):
 @method_decorator([csrf_exempt, admin_required_ajax], name='dispatch')
 class MetodoPagoUpdateAjaxView(View):
     def post(self, request, id_metodo):
-        api = MetodoPagoGestionSoap()
+        api = MetodoPagoGestionRest()
         try:
             # Obtener el estado actual del registro si no se envía
             estado_enviado = request.POST.get("EstadoMetodoPago")
@@ -125,7 +125,7 @@ class MetodoPagoUpdateAjaxView(View):
 @method_decorator([csrf_exempt, admin_required_ajax], name='dispatch')
 class MetodoPagoDeleteAjaxView(View):
     def post(self, request, id_metodo):
-        api = MetodoPagoGestionSoap()
+        api = MetodoPagoGestionRest()
         try:
             api.eliminar_metodo_pago(int(id_metodo))
             return JsonResponse({"status": "ok", "message": "Método de Pago eliminado exitosamente"})
@@ -150,7 +150,7 @@ class MetodoPagoSearchAjaxView(View):
     def get(self, request):
         q = (request.GET.get("q", "") or "").strip().upper()
 
-        api = MetodoPagoGestionSoap()
+        api = MetodoPagoGestionRest()
 
         try:
             # Debe devolver una lista de dicts, por ejemplo:

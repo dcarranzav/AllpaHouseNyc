@@ -11,7 +11,7 @@ import requests
 from requests.exceptions import ConnectionError, Timeout, HTTPError
 
 
-from servicios.soap.gestion.HoldGestionSoap import HoldGestionSoap
+from servicios.rest.gestion.HoldGestionRest import HoldGestionRest
 from webapp.decorators import admin_required, admin_required_ajax
 from datetime import datetime
 
@@ -60,7 +60,7 @@ class HoldListAjaxView(View):
         page = int(request.GET.get("page", 1))
         page_size = 20
 
-        api = HoldGestionSoap()
+        api = HoldGestionRest()
 
         try:
             data = api.obtener_hold()
@@ -96,7 +96,7 @@ class HoldListAjaxView(View):
 @method_decorator(admin_required_ajax, name='dispatch')
 class HoldGetAjaxView(View):
     def get(self, request, id_hold):
-        api = HoldGestionSoap()
+        api = HoldGestionRest()
         try:
             data = api.obtener_hold_por_id(id_hold)
             return JsonResponse({"status": "ok", "data": data})
@@ -116,7 +116,7 @@ class HoldGetAjaxView(View):
 @method_decorator([csrf_exempt, admin_required_ajax], name='dispatch')
 class HoldCreateAjaxView(View):
     def post(self, request):
-        api = HoldGestionSoap()
+        api = HoldGestionRest()
         print("*****************************    EJECUCION DE CREATE POST     *****************************")
         pprint(request.POST)
 
@@ -205,7 +205,7 @@ class HoldCreateAjaxView(View):
 @method_decorator([csrf_exempt, admin_required_ajax], name='dispatch')
 class HoldUpdateAjaxView(View):
     def post(self, request, id_hold):
-        api = HoldGestionSoap()
+        api = HoldGestionRest()
         print("*****************************    EJECUCION DE UPDATE POST     *****************************")
         pprint(request.POST)
 
@@ -310,7 +310,7 @@ class HoldUpdateAjaxView(View):
 class HoldDeleteAjaxView(View):
     def post(self, request, id_hold):
 
-        api = HoldGestionSoap()
+        api = HoldGestionRest()
         try:
             api.eliminar_hold(id_hold)
             return JsonResponse({"status": "ok", "message": "Hold eliminado exitosamente"})
@@ -332,7 +332,7 @@ class HoldNextIdAjaxView(View):
     """
 
     def get(self, request):
-        api = HoldGestionSoap()
+        api = HoldGestionRest()
 
         try:
             data = api.obtener_hold()

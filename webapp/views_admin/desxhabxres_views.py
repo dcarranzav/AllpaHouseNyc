@@ -5,7 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 
 
-from servicios.soap.gestion.DesxHabxResGestionSoap import DesxHabxResGestionSoap
+from servicios.rest.gestion.DesxHabxResGestionRest import DesxHabxResGestionRest
 from webapp.decorators import admin_required, admin_required_ajax
 
 
@@ -26,7 +26,7 @@ class DesxHabxResView(View):
 @method_decorator(admin_required_ajax, name='dispatch')
 class DesxHabxResListAjaxView(View):
     def get(self, request):
-        api = DesxHabxResGestionSoap()
+        api = DesxHabxResGestionRest()
 
         try:
             data = api.obtener_desxhabxres()
@@ -60,7 +60,7 @@ class DesxHabxResListAjaxView(View):
 @method_decorator(admin_required_ajax, name='dispatch')
 class DesxHabxResGetAjaxView(View):
     def get(self, request, id_descuento, id_habxres):
-        api = DesxHabxResGestionSoap()
+        api = DesxHabxResGestionRest()
         try:
             data = api.obtener_por_id(int(id_descuento), int(id_habxres))
             return JsonResponse({"status": "ok", "data": data})
@@ -83,7 +83,7 @@ class DesxHabxResCreateAjaxView(View):
 
         estado = request.POST.get("EstadoDesxHabxRes") == "true"
 
-        api = DesxHabxResGestionSoap()
+        api = DesxHabxResGestionRest()
 
         try:
             api.crear_desxhabxres(idDescuento, idHabxRes, monto, estado)
@@ -109,11 +109,11 @@ class DesxHabxResUpdateAjaxView(View):
             estado = estado_enviado == "true"
         else:
             # Obtener el estado actual del registro
-            api = DesxHabxResGestionSoap()
+            api = DesxHabxResGestionRest()
             registro_actual = api.obtener_desxhabxres_por_id(int(id_descuento), int(id_habxres))
             estado = registro_actual.get("EstadoDesxHabxRes", True) if registro_actual else True
 
-        api = DesxHabxResGestionSoap()
+        api = DesxHabxResGestionRest()
 
         try:
             api.actualizar_desxhabxres(int(id_descuento), int(id_habxres), monto, estado)
@@ -130,7 +130,7 @@ class DesxHabxResUpdateAjaxView(View):
 class DesxHabxResDeleteAjaxView(View):
     def post(self, request, id_descuento, id_habxres):
 
-        api = DesxHabxResGestionSoap()
+        api = DesxHabxResGestionRest()
 
         try:
             api.eliminar_desxhabxres(int(id_descuento), int(id_habxres))

@@ -1,0 +1,282 @@
+/* ============================================================
+   🎴 SISTEMA DE CARDS MODERNOS
+   ============================================================ */
+
+/* ==================== BASE CARD ==================== */
+.card-modern {
+    background: var(--bg-primary);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    transition: all var(--transition-base);
+    border: 1px solid var(--gray-100);
+}
+
+.card-modern:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-xl);
+}
+
+/* ==================== CARD PARTS ==================== */
+
+.card-header {
+    padding: var(--spacing-5) var(--spacing-6);
+    border-bottom: 1px solid var(--gray-100);
+    background: var(--gradient-subtle-1);
+}
+
+.card-body {
+    padding: var(--spacing-6);
+}
+
+.card-footer {
+    padding: var(--spacing-5) var(--spacing-6);
+    border-top: 1px solid var(--gray-100);
+    background: var(--bg-secondary);
+}
+
+/* ==================== CARD VARIANTS ==================== */
+
+.card-glassmorphism {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.card-gradient {
+    background: var(--gradient-primary);
+    color: white;
+    border: none;
+}
+
+.card-gradient .card-header,
+.card-gradient .card-footer {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* ==================== STAT CARDS ==================== */
+
+.stat-card {
+    padding: var(--spacing-6);
+    background: var(--bg-primary);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-base);
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-primary);
+}
+
+.stat-card:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: var(--shadow-lg);
+}
+
+.stat-icon {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: var(--radius-xl);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--text-3xl);
+    margin-bottom: var(--spacing-3);
+}
+
+.stat-icon-primary {
+    background: var(--primary-alpha-10);
+    color: var(--primary);
+}
+
+.stat-icon-success {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--success);
+}
+
+.stat-icon-warning {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--warning);
+}
+
+.stat-value {
+    font-size: var(--text-4xl);
+    font-weight: var(--font-bold);
+    color: var(--gray-900);
+    margin-bottom: var(--spacing-1);
+}
+
+.stat-label {
+    font-size: var(--text-sm);
+    color: var(--gray-600);
+    font-weight: var(--font-medium);
+}
+
+/* ==================== PRICING CARDS ==================== */
+
+.pricing-card {
+    padding: var(--spacing-8);
+    background: var(--bg-primary);
+    border-radius: var(--radius-3xl);
+    box-shadow: var(--shadow-lg);
+    text-align: center;
+    transition: all var(--transition-slow);
+    border: 2px solid transparent;
+}
+
+.pricing-card:hover {
+    transform: scale(1.05);
+    border-color: var(--primary);
+    box-shadow: var(--shadow-2xl);
+}
+
+.pricing-card.featured {
+    background: var(--gradient-primary);
+    color: white;
+    transform: scale(1.08);
+}
+
+.pricing-price {
+    font-size: var(--text-5xl);
+    font-weight: var(--font-extrabold);
+    margin: var(--spacing-4) 0;
+}
+
+/* ==================== TESTIMONIAL CARDS ==================== */
+
+.testimonial-card {
+    padding: var(--spacing-6);
+    background: var(--bg-primary);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-md);
+    position: relative;
+}
+
+.testimonial-quote {
+    font-size: var(--text-6xl);
+    color: var(--primary-alpha-20);
+    position: absolute;
+    top: var(--spacing-4);
+    left: var(--spacing-4);
+}
+
+.testimonial-avatar {
+    width: 4rem;
+    height: 4rem;
+    border-radius: var(--radius-full);
+    object-fit: cover;
+    border: 3px solid var(--primary);
+}
+
+/* ==================== PRODUCT CARDS ==================== */
+
+.product-card {
+    background: var(--bg-primary);
+    border-radius: var(--radius-2xl);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-base);
+}
+
+.product-card:hover {
+    box-shadow: var(--shadow-xl);
+    transform: translateY(-6px);
+}
+
+.product-image {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    transition: all var(--transition-slow);
+}
+
+.product-card:hover .product-image {
+    transform: scale(1.1);
+}
+
+.product-badge {
+    position: absolute;
+    top: var(--spacing-3);
+    right: var(--spacing-3);
+    padding: var(--spacing-1-5) var(--spacing-3);
+    background: var(--gradient-warm);
+    color: white;
+    font-size: var(--text-xs);
+    font-weight: var(--font-bold);
+    border-radius: var(--radius-full);
+    text-transform: uppercase;
+}
+
+.product-content {
+    padding: var(--spacing-5);
+}
+
+.product-title {
+    font-size: var(--text-xl);
+    font-weight: var(--font-bold);
+    margin-bottom: var(--spacing-2);
+    color: var(--gray-900);
+}
+
+.product-price {
+    font-size: var(--text-2xl);
+    font-weight: var(--font-extrabold);
+    color: var(--primary);
+}
+
+/* ==================== FEATURE CARDS ==================== */
+
+.feature-card {
+    padding: var(--spacing-8);
+    background: var(--bg-primary);
+    border-radius: var(--radius-2xl);
+    text-align: center;
+    transition: all var(--transition-base);
+    border: 2px solid transparent;
+}
+
+.feature-card:hover {
+    border-color: var(--primary);
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-xl);
+}
+
+.feature-icon {
+    width: 4rem;
+    height: 4rem;
+    margin: 0 auto var(--spacing-4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--gradient-primary);
+    color: white;
+    border-radius: var(--radius-xl);
+    font-size: var(--text-3xl);
+}
+
+/* ==================== RESPONSIVE ==================== */
+
+@media (max-width: 768px) {
+
+    .card-header,
+    .card-body,
+    .card-footer {
+        padding: var(--spacing-4);
+    }
+
+    .stat-card,
+    .pricing-card,
+    .feature-card {
+        padding: var(--spacing-5);
+    }
+}

@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block titulo_pagina %}
-<title>Mi Perfil | Hotel AureaCuen - Cuenca</title>
+<title>Mi Perfil | AllpaHouseNYC</title>
 {% endblock %}
 
 {% block css_archivos %}
@@ -31,12 +31,12 @@
         border: 1px solid color-mix(in srgb, var(--default-color), transparent 90%);
         box-shadow: 0 10px 40px color-mix(in srgb, var(--default-color), transparent 85%);
     }
-    
+
     .card-perfil h5 {
         color: var(--heading-color);
         font-family: var(--heading-font, 'Josefin Sans', sans-serif);
     }
-    
+
     .card-perfil label {
         color: var(--heading-color);
         font-weight: 500;
@@ -56,9 +56,10 @@
     }
 
     .btn-primary {
-        display: none; /* No actualizar porque TODO es readonly */
+        display: none;
+        /* No actualizar porque TODO es readonly */
     }
-    
+
     .admin-icon {
         color: var(--color-accent) !important;
     }
@@ -69,7 +70,8 @@
 
 <section class="perfil-wrapper">
 
-    <h2 class="fw-bold mb-4 text-center" style="color: var(--heading-color); font-family: var(--heading-font, 'Josefin Sans', sans-serif);">
+    <h2 class="fw-bold mb-4 text-center"
+        style="color: var(--heading-color); font-family: var(--heading-font, 'Josefin Sans', sans-serif);">
         <i class="bi bi-person-circle" style="color: var(--accent-color);"></i> Mi Perfil
     </h2>
 
@@ -122,10 +124,10 @@
     // =============================================
     // Cargar datos desde localStorage — SOLO LECTURA
     // =============================================
-    document.getElementById("u_nombre").value    = localStorage.getItem("usuario_nombre") || "";
-    document.getElementById("u_apellido").value  = localStorage.getItem("usuario_apellido") || "";
-    document.getElementById("u_correo").value    = localStorage.getItem("usuario_correo") || "";
-    document.getElementById("u_tipo_doc").value  = localStorage.getItem("usuario_tipo_doc") || "";
+    document.getElementById("u_nombre").value = localStorage.getItem("usuario_nombre") || "";
+    document.getElementById("u_apellido").value = localStorage.getItem("usuario_apellido") || "";
+    document.getElementById("u_correo").value = localStorage.getItem("usuario_correo") || "";
+    document.getElementById("u_tipo_doc").value = localStorage.getItem("usuario_tipo_doc") || "";
     document.getElementById("u_documento").value = localStorage.getItem("usuario_documento") || "";
 
 </script>

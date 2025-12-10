@@ -11,7 +11,7 @@ class HoldGestionRest:
     Equivalente al controlador HoldGestionController en C#.
 
     URL base:
-    http://aureacuengr.runasp.net/api/gestion/hold
+    
     """
 
     BASE_URL = "http://allphahousenycrg.runasp.net/api/gestion/hold"

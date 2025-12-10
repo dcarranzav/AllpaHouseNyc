@@ -11,7 +11,7 @@ class ImagenHabitacionGestionRest:
     Equivalente al controlador ImagenesHabitacionGestionController en C#.
 
     URL base:
-    http://aureacuengr.runasp.net/api/gestion/imagenes-habitacion
+   
     """
 
     BASE_URL = "http://allphahousenycrg.runasp.net/api/gestion/imagenes-habitacion"

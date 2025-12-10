@@ -11,7 +11,7 @@ import requests
 from requests.exceptions import ConnectionError, Timeout, HTTPError
 
 
-from servicios.soap.gestion.UsuarioInternoGestionSoap import UsuarioInternoGestionSoap
+from servicios.rest.gestion.UsuarioInternoGestionRest import UsuarioInternoGestionRest
 from webapp.decorators import admin_required, admin_required_ajax
 
 
@@ -26,7 +26,7 @@ class UsuarioInternoView(View):
 @method_decorator(admin_required_ajax, name='dispatch')
 class UsuarioInternoListAjaxView(View):
     def get(self, request):
-        api = UsuarioInternoGestionSoap()
+        api = UsuarioInternoGestionRest()
         try:
             data = api.listar()
             page_number = int(request.GET.get("page", 1))
@@ -57,7 +57,7 @@ class UsuarioInternoListAjaxView(View):
 @method_decorator(admin_required_ajax, name='dispatch')
 class UsuarioInternoGetAjaxView(View):
     def get(self, request, id_usuario):
-        api = UsuarioInternoGestionSoap()
+        api = UsuarioInternoGestionRest()
         try:
             data = api.obtener_por_id(id_usuario)
             return JsonResponse({"status": "ok", "data": data})
@@ -77,7 +77,7 @@ class UsuarioInternoGetAjaxView(View):
 class UsuarioInternoCreateAjaxView(View):
     def post(self, request):
         import re
-        api = UsuarioInternoGestionSoap()
+        api = UsuarioInternoGestionRest()
         try:
             # Obtener datos
             nombre = request.POST.get("nombre", "").strip()
@@ -147,7 +147,7 @@ class UsuarioInternoCreateAjaxView(View):
 class UsuarioInternoUpdateAjaxView(View):
     def post(self, request, id_usuario):
         import re
-        api = UsuarioInternoGestionSoap()
+        api = UsuarioInternoGestionRest()
         pprint(request.POST)
         try:
             # Obtener datos
@@ -225,7 +225,7 @@ class UsuarioInternoUpdateAjaxView(View):
 @method_decorator([csrf_exempt, admin_required_ajax], name='dispatch')
 class UsuarioInternoDeleteAjaxView(View):
     def post(self, request, id_usuario):
-        api = UsuarioInternoGestionSoap()
+        api = UsuarioInternoGestionRest()
         try:
             api.eliminar(id_usuario)
             return JsonResponse({"status": "ok", "message": "Usuario Interno eliminado exitosamente"})
@@ -247,7 +247,7 @@ class UsuarioInternoSearchAjaxView(View):
 
     def get(self, request):
         q = (request.GET.get("q", "") or "").strip().upper()
-        api = UsuarioInternoGestionSoap()
+        api = UsuarioInternoGestionRest()
 
         try:
             usuarios = api.listar() or []
@@ -300,7 +300,7 @@ class UsuarioInternoNextIdAjaxView(View):
     (máximo Id actual + 1). Es solo informativo: tu API genera su propio Id.
     """
     def get(self, request):
-        api = UsuarioInternoGestionSoap()
+        api = UsuarioInternoGestionRest()
         try:
             usuarios = api.listar()
             max_id = 0

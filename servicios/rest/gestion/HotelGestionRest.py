@@ -9,7 +9,7 @@ class HotelGestionRest:
     Equivalente al controlador HotelGestionController en C#.
 
     URL base:
-    http://aureacuengr.runasp.net/api/gestion/hotel
+    
     """
 
     BASE_URL = "http://allphahousenycrg.runasp.net/api/gestion/hotel"

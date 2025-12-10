@@ -112,17 +112,18 @@
             <!-- Capacidad -->
             <div class="d-flex align-items-center px-3 py-2 flex-grow-1 border-end">
                 <i class="bi bi-people-fill me-2 text-secondary"></i>
-                <input type="number" name="capacidad" min="1" class="form-control border-0" placeholder="Capacidad">
+                <input type="number" name="capacidad" min="1" max="99" inputmode="numeric" pattern="[0-9]*"
+                    class="form-control border-0" placeholder="Capacidad">
             </div>
 
             <!-- Precios -->
             <div class="d-flex align-items-center px-3 py-2 flex-grow-1 border-end">
                 <i class="bi bi-cash me-2 text-secondary"></i>
-                <input type="number" name="precio_min" min="0" class="form-control border-0"
-                    placeholder="Precio mínimo">
+                <input type="number" name="precio_min" min="0" step="1" inputmode="numeric" pattern="[0-9]*"
+                    class="form-control border-0" placeholder="Precio mínimo">
                 <span class="mx-2 text-secondary">—</span>
-                <input type="number" name="precio_max" min="0" class="form-control border-0"
-                    placeholder="Precio máximo">
+                <input type="number" name="precio_max" min="0" step="1" inputmode="numeric" pattern="[0-9]*"
+                    class="form-control border-0" placeholder="Precio máximo">
             </div>
 
             <!-- Botón -->
@@ -373,6 +374,58 @@
 
         // Primera carga de resultados sin filtros
         cargarHabitaciones(true);
+
+        // -------------------------
+        // VALIDACIÓN DE CAMPOS NUMÉRICOS
+        // -------------------------
+        // Prevenir caracteres no numéricos en campos de precio y capacidad
+        const camposNumericos = document.querySelectorAll('input[name="precio_min"], input[name="precio_max"], input[name="capacidad"]');
+
+        camposNumericos.forEach(input => {
+            // Prevenir teclas no numéricas
+            input.addEventListener('keydown', (e) => {
+                // Permitir: backspace, delete, tab, escape, enter, home, end, flechas
+                const permitidos = ['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'Home', 'End', 'ArrowLeft', 'ArrowRight'];
+
+                // Permitir: Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+                if ((e.ctrlKey || e.metaKey) && ['a', 'c', 'v', 'x'].includes(e.key.toLowerCase())) {
+                    return;
+                }
+
+                // Si no es una tecla permitida y no es un número (0-9), prevenir
+                if (!permitidos.includes(e.key) && (e.key < '0' || e.key > '9')) {
+                    e.preventDefault();
+                }
+            });
+
+            // Prevenir entrada de caracteres no numéricos en paste
+            input.addEventListener('paste', (e) => {
+                e.preventDefault();
+                const pasteData = e.clipboardData.getData('text');
+                // Solo permitir dígitos
+                const numericValue = pasteData.replace(/[^0-9]/g, '');
+
+                // Insertar solo los números
+                const start = input.selectionStart;
+                const end = input.selectionEnd;
+                const currentValue = input.value;
+                input.value = currentValue.substring(0, start) + numericValue + currentValue.substring(end);
+
+                // Posicionar cursor después del texto pegado
+                const newPosition = start + numericValue.length;
+                input.setSelectionRange(newPosition, newPosition);
+            });
+
+            // Limpiar cualquier caracter no numérico al perder foco
+            input.addEventListener('blur', () => {
+                input.value = input.value.replace(/[^0-9]/g, '');
+            });
+
+            // Prevenir rueda del mouse que cambie el valor (opcional pero recomendado)
+            input.addEventListener('wheel', (e) => {
+                e.preventDefault();
+            });
+        });
     });
 </script>
 {% endblock %}

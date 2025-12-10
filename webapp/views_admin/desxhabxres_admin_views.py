@@ -8,7 +8,7 @@ from django.utils.decorators import method_decorator
 
 from math import ceil
 
-from servicios.soap.gestion.DesxHabxResGestionSoap import DesxHabxResGestionSoap
+from servicios.rest.gestion.DesxHabxResGestionRest import DesxHabxResGestionRest
 from webapp.decorators import admin_required, admin_required_ajax
 
 
@@ -30,7 +30,7 @@ class DesxHabxResView(View):
 class DesxHabxResListAjaxView(View):
     def get(self, request):
 
-        api = DesxHabxResGestionSoap()
+        api = DesxHabxResGestionRest()
 
         try:
             data = api.obtener_desxhabxres()
@@ -66,7 +66,7 @@ class DesxHabxResListAjaxView(View):
 class DesxHabxResGetAjaxView(View):
     def get(self, request, id_descuento, id_habxres):
 
-        api = DesxHabxResGestionSoap()
+        api = DesxHabxResGestionRest()
 
         try:
             data = api.obtener_por_id(int(id_descuento), int(id_habxres))
@@ -102,7 +102,7 @@ class DesxHabxResCreateAjaxView(View):
 
             estado = request.POST.get("EstadoDesxHabxRes") == "true"
 
-            api = DesxHabxResGestionSoap()
+            api = DesxHabxResGestionRest()
             api.crear_desxhabxres(idDescuento, idHabxRes, monto, estado)
 
             return JsonResponse({
@@ -130,7 +130,7 @@ class DesxHabxResCreateAjaxView(View):
 class DesxHabxResUpdateAjaxView(View):
     def post(self, request, id_descuento, id_habxres):
 
-        api = DesxHabxResGestionSoap()
+        api = DesxHabxResGestionRest()
 
         try:
             monto_raw = request.POST.get("MontoDesxHabxRes")
@@ -171,7 +171,7 @@ class DesxHabxResUpdateAjaxView(View):
 class DesxHabxResDeleteAjaxView(View):
     def post(self, request, id_descuento, id_habxres):
 
-        api = DesxHabxResGestionSoap()
+        api = DesxHabxResGestionRest()
 
         try:
             api.eliminar_desxhabxres(int(id_descuento), int(id_habxres))

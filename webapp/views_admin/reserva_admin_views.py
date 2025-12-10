@@ -10,7 +10,7 @@ import requests
 from requests.exceptions import ConnectionError, Timeout, HTTPError
 
 
-from servicios.soap.gestion.ReservaGestionSoap import ReservaGestionSoap
+from servicios.rest.gestion.ReservaGestionRest import ReservaGestionRest
 from webapp.decorators import admin_required, admin_required_ajax
 
 
@@ -31,7 +31,7 @@ class ReservaView(View):
 @method_decorator(admin_required_ajax, name='dispatch')
 class ReservaListAjaxView(View):
     def get(self, request):
-        api = ReservaGestionSoap()
+        api = ReservaGestionRest()
         try:
             data = api.obtener_reservas()  # lista de dicts
 
@@ -58,7 +58,7 @@ class ReservaListAjaxView(View):
 @method_decorator(admin_required_ajax, name='dispatch')
 class ReservaGetAjaxView(View):
     def get(self, request, id_reserva):
-        api = ReservaGestionSoap()
+        api = ReservaGestionRest()
         try:
             data = api.obtener_reserva_por_id(id_reserva)
             return JsonResponse({"status": "ok", "data": data})
@@ -75,7 +75,7 @@ class ReservaGetAjaxView(View):
 @method_decorator([csrf_exempt, admin_required_ajax], name='dispatch')
 class ReservaCreateAjaxView(View):
     def post(self, request):
-        api = ReservaGestionSoap()
+        api = ReservaGestionRest()
         try:
             # Campos enviados desde el formulario (PascalCase)
             id_reserva = int(request.POST.get("IdReserva"))
@@ -124,7 +124,7 @@ class ReservaCreateAjaxView(View):
 @method_decorator([csrf_exempt, admin_required_ajax], name='dispatch')
 class ReservaUpdateAjaxView(View):
     def post(self, request, id_reserva):
-        api = ReservaGestionSoap()
+        api = ReservaGestionRest()
         try:
             id_unico_usuario = request.POST.get("IdUnicoUsuario")
             id_unico_usuario = int(id_unico_usuario) if id_unico_usuario else None
@@ -178,7 +178,7 @@ class ReservaUpdateAjaxView(View):
 @method_decorator([csrf_exempt, admin_required_ajax], name='dispatch')
 class ReservaDeleteAjaxView(View):
     def post(self, request, id_reserva):
-        api = ReservaGestionSoap()
+        api = ReservaGestionRest()
         try:
             api.eliminar_reserva(int(id_reserva))
             return JsonResponse({"status": "ok", "message": "Reserva eliminado exitosamente"})
@@ -193,7 +193,7 @@ class ReservaDeleteAjaxView(View):
 # ================================
 from django.utils.decorators import method_decorator
 from webapp.decorators import admin_required_ajax
-from servicios.soap.gestion.ReservaGestionSoap import ReservaGestionSoap
+from servicios.rest.gestion.ReservaGestionRest import ReservaGestionRest
 
 @method_decorator(admin_required_ajax, name='dispatch')
 class ReservaSearchAjaxView(View):
@@ -201,7 +201,7 @@ class ReservaSearchAjaxView(View):
         # Texto que escribe el usuario en el Select2
         q = request.GET.get("q", "").strip().upper()
 
-        api = ReservaGestionSoap()
+        api = ReservaGestionRest()
 
         try:
             reservas = api.obtener_reservas()   # ya te devuelve la lista de dicts
@@ -244,7 +244,7 @@ class ReservaSearchAjaxView(View):
 @method_decorator(admin_required_ajax, name='dispatch')
 class ReservaNextIdAjaxView(View):
     def get(self, request):
-        api = ReservaGestionSoap()
+        api = ReservaGestionRest()
         try:
             reservas = api.obtener_reservas()  # lista de dicts
             max_id = 0
@@ -283,7 +283,7 @@ class ReservaNextIdAjaxView(View):
 @method_decorator(admin_required_ajax, name='dispatch')
 class ReservaNextIdAjaxView(View):
     def get(self, request):
-        api = ReservaGestionSoap()
+        api = ReservaGestionRest()
         try:
             reservas = api.obtener_reservas()  # lista de dicts
             max_id = 0

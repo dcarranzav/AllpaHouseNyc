@@ -11,7 +11,7 @@ import requests
 from requests.exceptions import ConnectionError, Timeout, HTTPError
 
 
-from servicios.soap.gestion.RolGestionSoap import RolGestionSoap
+from servicios.rest.gestion.RolGestionRest import RolGestionRest
 from webapp.decorators import admin_required, admin_required_ajax
 
 
@@ -26,7 +26,7 @@ class RolView(View):
 @method_decorator(admin_required_ajax, name='dispatch')
 class RolListAjaxView(View):
     def get(self, request):
-        api = RolGestionSoap()
+        api = RolGestionRest()
         try:
             data = api.obtener_roles()
 
@@ -58,7 +58,7 @@ class RolListAjaxView(View):
 @method_decorator(admin_required_ajax, name='dispatch')
 class RolGetAjaxView(View):
     def get(self, request, id_rol):
-        api = RolGestionSoap()
+        api = RolGestionRest()
         try:
             data = api.obtener_rol_por_id(id_rol)
             return JsonResponse({"status": "ok", "data": data})
@@ -77,7 +77,7 @@ class RolGetAjaxView(View):
 @method_decorator([csrf_exempt, admin_required_ajax], name='dispatch')
 class RolCreateAjaxView(View):
     def post(self, request):
-        api = RolGestionSoap()
+        api = RolGestionRest()
         try:
             id_rol = request.POST.get("IdRol")
             nombre = request.POST.get("NombreRol")
@@ -107,7 +107,7 @@ class RolCreateAjaxView(View):
 @method_decorator([csrf_exempt, admin_required_ajax], name='dispatch')
 class RolUpdateAjaxView(View):
     def post(self, request, id_rol):
-        api = RolGestionSoap()
+        api = RolGestionRest()
         try:
             nombre = request.POST.get("NombreRol")
             
@@ -144,7 +144,7 @@ class RolUpdateAjaxView(View):
 @method_decorator([csrf_exempt, admin_required_ajax], name='dispatch')
 class RolDeleteAjaxView(View):
     def post(self, request, id_rol):
-        api = RolGestionSoap()
+        api = RolGestionRest()
         try:
             api.eliminar_rol(id_rol)
             return JsonResponse({"status": "ok", "message": "Rol eliminado exitosamente"})
@@ -163,7 +163,7 @@ class RolDeleteAjaxView(View):
 @method_decorator(admin_required_ajax, name='dispatch')
 class RolNextIdAjaxView(View):
     def get(self, request):
-        api = RolGestionSoap()
+        api = RolGestionRest()
         try:
             roles = api.obtener_roles()   # lista de dicts
             max_id = 0

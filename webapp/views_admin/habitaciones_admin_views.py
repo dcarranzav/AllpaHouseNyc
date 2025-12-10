@@ -12,7 +12,7 @@ import time
 import logging
 from requests.exceptions import ConnectionError, Timeout, HTTPError
 
-from servicios.soap.gestion.HabitacionGestionSoap import HabitacionGestionSoap
+from servicios.rest.gestion.HabitacionesGestionRest import HabitacionesGestionRest
 from webapp.decorators import admin_required, admin_required_ajax
 
 logger = logging.getLogger(__name__)
@@ -36,7 +36,7 @@ class HabitacionesView(View):
 class HabitacionesListAjaxView(View):
 
     def get(self, request):
-        api = HabitacionGestionSoap()
+        api = HabitacionesGestionRest()
 
         try:
             start_time = time.time()
@@ -94,7 +94,7 @@ class HabitacionesListAjaxView(View):
 class HabitacionesGetAjaxView(View):
 
     def get(self, request, id_habitacion):
-        api = HabitacionGestionSoap()
+        api = HabitacionesGestionRest()
         try:
             data = api.obtener_por_id(id_habitacion)
             return JsonResponse({"status": "ok", "data": data})
@@ -128,7 +128,7 @@ class HabitacionesCreateAjaxView(View):
                 return JsonResponse({"status": "error", "message": f"{label} es requerido"}, status=400)
 
         try:
-            api = HabitacionGestionSoap()
+            api = HabitacionesGestionRest()
 
             api.crear_habitacion(
                 request.POST.get("IdHabitacion"),
@@ -171,7 +171,7 @@ class HabitacionesUpdateAjaxView(View):
                 return JsonResponse({"status": "error", "message": f"{campo} es obligatorio"}, status=400)
 
         try:
-            api = HabitacionGestionSoap()
+            api = HabitacionesGestionRest()
 
             estado_raw = request.POST.get("EstadoActivoHabitacion")
 
@@ -215,7 +215,7 @@ class HabitacionesDeleteAjaxView(View):
 
     def post(self, request, id_habitacion):
 
-        api = HabitacionGestionSoap()
+        api = HabitacionesGestionRest()
 
         try:
             api.eliminar_habitacion(id_habitacion)
@@ -240,7 +240,7 @@ class HabitacionesNextIdAjaxView(View):
     """
 
     def get(self, request):
-        api = HabitacionGestionSoap()
+        api = HabitacionesGestionRest()
 
         try:
             data = api.obtener_habitaciones()

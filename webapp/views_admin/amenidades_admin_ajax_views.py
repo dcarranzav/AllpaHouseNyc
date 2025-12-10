@@ -6,7 +6,7 @@ from django.utils.decorators import method_decorator
 
 from requests.exceptions import ConnectionError, Timeout, HTTPError
 
-from servicios.soap.gestion.AmenidadGestionSoap import AmenidadGestionSoap
+from servicios.rest.gestion.AmenidadesGestionRest import AmenidadesGestionRest
 from webapp.decorators import admin_required, admin_required_ajax
 
 
@@ -27,7 +27,7 @@ class AmenidadesView(View):
 @method_decorator(admin_required_ajax, name='dispatch')
 class AmenidadesListAjaxView(View):
     def get(self, request):
-        api = AmenidadGestionSoap()
+        api = AmenidadesGestionRest()
         try:
             page = int(request.GET.get("page", 1))
             page_size = 20
@@ -77,7 +77,7 @@ class AmenidadesCreateAjaxView(View):
             return JsonResponse({"status": "error", "message": "Nombre Amenidad es requerido"}, status=400)
 
         try:
-            api = AmenidadGestionSoap()
+            api = AmenidadesGestionRest()
             api.crear_amenidad(
                 id_amenidad=int(idA),
                 nombre=nombre,
@@ -95,7 +95,7 @@ class AmenidadesCreateAjaxView(View):
 @method_decorator(admin_required_ajax, name='dispatch')
 class AmenidadesGetAjaxView(View):
     def get(self, request, id):
-        api = AmenidadGestionSoap()
+        api = AmenidadesGestionRest()
         try:
             data = api.obtener_amenidad_por_id(id)
             return JsonResponse({"status": "ok", "data": data})
@@ -117,7 +117,7 @@ class AmenidadesUpdateAjaxView(View):
         if not nombre:
             return JsonResponse({"status": "error", "message": "Nombre Amenidad es requerido"}, status=400)
 
-        api = AmenidadGestionSoap()
+        api = AmenidadesGestionRest()
 
         try:
             # Si enviaron el estado (checkbox)
@@ -147,7 +147,7 @@ class AmenidadesUpdateAjaxView(View):
 class AmenidadesDeleteAjaxView(View):
     def post(self, request, id):
 
-        api = AmenidadGestionSoap()
+        api = AmenidadesGestionRest()
 
         try:
             api.eliminar_amenidad(id)
@@ -161,7 +161,7 @@ class AmenidadesDeleteAjaxView(View):
 class AmenidadesNextIdAjaxView(View):
 
     def get(self, request):
-        api = AmenidadGestionSoap()
+        api = AmenidadesGestionRest()
 
         try:
             data = api.obtener_amenidades()

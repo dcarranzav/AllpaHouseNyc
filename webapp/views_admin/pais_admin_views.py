@@ -8,7 +8,7 @@ import requests
 from requests.exceptions import ConnectionError, Timeout, HTTPError
 
 
-from servicios.soap.gestion.PaisGestionSoap import PaisGestionSoap
+from servicios.rest.gestion.PaisGestionRest import PaisGestionRest
 from webapp.decorators import admin_required, admin_required_ajax
 
 
@@ -32,7 +32,7 @@ class PaisListAjaxView(View):
         page = int(request.GET.get("page", 1))
         page_size = 20
 
-        api = PaisGestionSoap()
+        api = PaisGestionRest()
 
         try:
             data = api.obtener_paises()
@@ -70,7 +70,7 @@ class PaisListAjaxView(View):
 @method_decorator(admin_required_ajax, name='dispatch')
 class PaisGetAjaxView(View):
     def get(self, request, id_pais):
-        api = PaisGestionSoap()
+        api = PaisGestionRest()
         try:
             data = api.obtener_pais_por_id(id_pais)
             return JsonResponse({"status": "ok", "data": data})
@@ -92,7 +92,7 @@ class PaisGetAjaxView(View):
 @method_decorator([csrf_exempt, admin_required_ajax], name='dispatch')
 class PaisCreateAjaxView(View):
     def post(self, request):
-        api = PaisGestionSoap()
+        api = PaisGestionRest()
         try:
             api.crear_pais(
                 id_pais=int(request.POST.get("IdPais")),
@@ -118,7 +118,7 @@ class PaisCreateAjaxView(View):
 @method_decorator([csrf_exempt, admin_required_ajax], name='dispatch')
 class PaisUpdateAjaxView(View):
     def post(self, request, id_pais):
-        api = PaisGestionSoap()
+        api = PaisGestionRest()
         try:
             # Obtener el estado actual del registro si no se envía
             estado_enviado = request.POST.get("EstadoPais")
@@ -153,7 +153,7 @@ class PaisUpdateAjaxView(View):
 @method_decorator([csrf_exempt, admin_required_ajax], name='dispatch')
 class PaisDeleteAjaxView(View):
     def post(self, request, id_pais):
-        api = PaisGestionSoap()
+        api = PaisGestionRest()
         try:
             api.eliminar_pais(id_pais)
             return JsonResponse({"status": "ok", "message": "País eliminado exitosamente"})
@@ -175,7 +175,7 @@ class PaisNextIdAjaxView(View):
     """
 
     def get(self, request):
-        api = PaisGestionSoap()
+        api = PaisGestionRest()
 
         try:
             data = api.obtener_paises() or []

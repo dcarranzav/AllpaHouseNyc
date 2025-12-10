@@ -8,7 +8,7 @@ from django.utils.decorators import method_decorator
 from django.core.paginator import Paginator
 from decimal import Decimal, InvalidOperation
 
-from servicios.soap.gestion.FacturaGestionSoap import FacturaGestionSoap
+from servicios.rest.gestion.FacturasGestionRest import FacturasGestionRest
 from webapp.decorators import admin_required, admin_required_ajax
 
 
@@ -35,7 +35,7 @@ class FacturaListAjaxView(View):
         page = int(request.GET.get("page", 1))
         page_size = 20
 
-        api = FacturaGestionSoap()
+        api = FacturasGestionRest()
 
         try:
             data = api.obtener_facturas() or []
@@ -70,7 +70,7 @@ class FacturaListAjaxView(View):
 @method_decorator(admin_required_ajax, name="dispatch")
 class FacturaGetAjaxView(View):
     def get(self, request, id_factura):
-        api = FacturaGestionSoap()
+        api = FacturasGestionRest()
 
         try:
             data = api.obtener_por_id(int(id_factura))
@@ -106,7 +106,7 @@ class FacturaGetAjaxView(View):
 @method_decorator([csrf_exempt, admin_required_ajax], name="dispatch")
 class FacturaCreateAjaxView(View):
     def post(self, request):
-        api = FacturaGestionSoap()
+        api = FacturasGestionRest()
 
         try:
             id_factura = request.POST.get("IdFactura")
@@ -172,7 +172,7 @@ class FacturaCreateAjaxView(View):
 @method_decorator([csrf_exempt, admin_required_ajax], name="dispatch")
 class FacturaUpdateAjaxView(View):
     def post(self, request, id_factura):
-        api = FacturaGestionSoap()
+        api = FacturasGestionRest()
 
         try:
             id_reserva = request.POST.get("IdReserva")
@@ -236,7 +236,7 @@ class FacturaUpdateAjaxView(View):
 @method_decorator([csrf_exempt, admin_required_ajax], name="dispatch")
 class FacturaDeleteAjaxView(View):
     def post(self, request, id_factura):
-        api = FacturaGestionSoap()
+        api = FacturasGestionRest()
 
         try:
             ok = api.eliminar_factura(int(id_factura))
@@ -282,7 +282,7 @@ class FacturaSearchAjaxView(View):
 
     def get(self, request):
         q = (request.GET.get("q", "") or "").strip().upper()
-        api = FacturaGestionSoap()
+        api = FacturasGestionRest()
 
         try:
             items = api.obtener_facturas() or []

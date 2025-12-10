@@ -12,7 +12,7 @@ import requests
 from requests.exceptions import ConnectionError, Timeout, HTTPError
 
 
-from servicios.soap.gestion.TipoHabitacionGestionSoap import TipoHabitacionGestionSoap
+from servicios.rest.gestion.TipoHabitacionGestionRest import TipoHabitacionGestionRest
 from webapp.decorators import admin_required, admin_required_ajax
 
 
@@ -27,7 +27,7 @@ class TipoHabitacionView(View):
 @method_decorator(admin_required_ajax, name='dispatch')
 class TipoHabitacionListAjaxView(View):
     def get(self, request):
-        api = TipoHabitacionGestionSoap()
+        api = TipoHabitacionGestionRest()
         try:
             data = api.obtener_tipos()
             page_number = int(request.GET.get("page", 1))
@@ -58,7 +58,7 @@ class TipoHabitacionListAjaxView(View):
 @method_decorator(admin_required_ajax, name='dispatch')
 class TipoHabitacionGetAjaxView(View):
     def get(self, request, id_tipo):
-        api = TipoHabitacionGestionSoap()
+        api = TipoHabitacionGestionRest()
         try:
             data = api.obtener_tipo_por_id(id_tipo)
             return JsonResponse({"status": "ok", "data": data})
@@ -77,7 +77,7 @@ class TipoHabitacionGetAjaxView(View):
 @method_decorator([csrf_exempt, admin_required_ajax], name='dispatch')
 class TipoHabitacionCreateAjaxView(View):
     def post(self, request):
-        api = TipoHabitacionGestionSoap()
+        api = TipoHabitacionGestionRest()
         try:
             dto = {
                 "idTipoHabitacion": int(request.POST.get("id_tipo")),
@@ -103,7 +103,7 @@ class TipoHabitacionCreateAjaxView(View):
 @method_decorator([csrf_exempt, admin_required_ajax], name='dispatch')
 class TipoHabitacionUpdateAjaxView(View):
     def post(self, request, id_tipo):
-        api = TipoHabitacionGestionSoap()
+        api = TipoHabitacionGestionRest()
         pprint(request.POST)
         try:
             # Obtener el estado actual del registro si no se envía
@@ -139,7 +139,7 @@ class TipoHabitacionUpdateAjaxView(View):
 @method_decorator([csrf_exempt, admin_required_ajax], name='dispatch')
 class TipoHabitacionDeleteAjaxView(View):
     def post(self, request, id_tipo):
-        api = TipoHabitacionGestionSoap()
+        api = TipoHabitacionGestionRest()
         try:
             api.eliminar_tipo(id_tipo)
             return JsonResponse({"status": "ok", "message": "Tipo de Habitación eliminado exitosamente"})
@@ -159,7 +159,7 @@ class TipoHabitacionDeleteAjaxView(View):
 @method_decorator(admin_required_ajax, name='dispatch')
 class TipoHabitacionNextIdAjaxView(View):
     def get(self, request):
-        api = TipoHabitacionGestionSoap()
+        api = TipoHabitacionGestionRest()
         try:
             tipos = api.obtener_tipos()   # lista de dicts
             max_id = 0

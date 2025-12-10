@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.urls import reverse
 from django.utils.decorators import method_decorator
-from servicios.soap.gestion.FacturaGestionSoap import FacturaGestionSoap
+from servicios.rest.gestion.FacturasGestionRest import FacturasGestionRest
 from webapp.decorators import admin_required, admin_required_ajax
 
 @method_decorator(admin_required, name='dispatch')
@@ -16,7 +16,7 @@ class FacturasView(View):
         - Listado general
         - Cargar registro para editar (?edit=ID)
         """
-        api = FacturaGestionSoap()
+        api = FacturasGestionRest()
 
         # ¿Modificar?
         edit_id = request.GET.get("edit")
@@ -49,7 +49,7 @@ class FacturasView(View):
         - Actualizar (?update=ID)
         - Eliminar (?delete=ID)
         """
-        api = FacturaGestionSoap()
+        api = FacturasGestionRest()
 
         # 🔥 ELIMINAR
         delete_id = request.GET.get("delete")

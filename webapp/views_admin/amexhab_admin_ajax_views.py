@@ -10,7 +10,7 @@ import requests
 from reportlab.lib.randomtext import PRINTING
 from requests.exceptions import ConnectionError, Timeout, HTTPError
 
-from servicios.soap.gestion.AmexHabGestionSoap import AmexHabGestionSoap
+from servicios.rest.gestion.AmexHabGestionRest import AmexHabGestionRest
 from webapp.decorators import admin_required, admin_required_ajax
 
 
@@ -34,7 +34,7 @@ from math import ceil
 class AmexHabListAjaxView(View):
     def get(self, request):
 
-        api = AmexHabGestionSoap()
+        api = AmexHabGestionRest()
         try:
             data = api.obtener_amexhab()
 
@@ -78,7 +78,7 @@ class AmexHabListAjaxView(View):
 @method_decorator(admin_required_ajax, name='dispatch')
 class AmexHabGetAjaxView(View):
     def get(self, request, id_habitacion, id_amenidad):
-        api = AmexHabGestionSoap()
+        api = AmexHabGestionRest()
         try:
             data = api.obtener_amexhab_por_id(id_habitacion, id_amenidad)
             return JsonResponse({"status": "ok", "data": data})
@@ -109,7 +109,7 @@ class AmexHabCreateAjaxView(View):
             if not idAmenidad:
                 return JsonResponse({"status": "error", "message": "ID Amenidad es requerido"}, status=400)
 
-            api = AmexHabGestionSoap()
+            api = AmexHabGestionRest()
             api.crear_amexhab(idHabitacion, int(idAmenidad), estado)
             return JsonResponse({"status": "ok", "message": "Amenidad por Habitación creada exitosamente"})
         except ConnectionError:
@@ -135,11 +135,11 @@ class AmexHabUpdateAjaxView(View):
                 estado = estado_enviado == "true"
             else:
                 # Obtener el estado actual del registro
-                api = AmexHabGestionSoap()
+                api = AmexHabGestionRest()
                 registro_actual = api.obtener_amexhab_por_id(id_habitacion, int(id_amenidad))
                 estado = registro_actual.get("EstadoAmexHab", True) if registro_actual else True
 
-            api = AmexHabGestionSoap()
+            api = AmexHabGestionRest()
             api.actualizar_amexhab(id_habitacion, int(id_amenidad), estado)
             return JsonResponse({"status": "ok", "message": "Amenidad por Habitación actualizada exitosamente"})
         except ConnectionError:
@@ -159,7 +159,7 @@ class AmexHabUpdateAjaxView(View):
 class AmexHabDeleteAjaxView(View):
     def post(self, request, id_habitacion, id_amenidad):
 
-        api = AmexHabGestionSoap()
+        api = AmexHabGestionRest()
         try:
             api.eliminar_amexhab(id_habitacion, int(id_amenidad))
             return JsonResponse({"status": "ok", "message": "Amenidad por Habitación eliminada exitosamente"})
@@ -174,14 +174,14 @@ class AmexHabDeleteAjaxView(View):
 # ================================
 # BUSCADOR AJAX PARA SELECT2
 # ================================
-from servicios.soap.gestion.HabitacionGestionSoap import HabitacionGestionSoap
+from servicios.rest.gestion.HabitacionesGestionRest import HabitacionesGestionRest
 from django.http import JsonResponse
 from django.views import View
 class HabitacionSearchAjaxView(View):
     def get(self, request):
         q = request.GET.get("q", "").strip().upper()
 
-        api = HabitacionGestionSoap()
+        api = HabitacionesGestionRest()
 
         try:
             habitaciones = api.obtener_habitaciones()  # ← aquí ya funciona

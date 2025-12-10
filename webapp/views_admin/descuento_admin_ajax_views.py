@@ -11,7 +11,7 @@ from requests.exceptions import ConnectionError, Timeout, HTTPError
 
 from math import ceil
 
-from servicios.soap.gestion.DescuentoGestionSoap import DescuentoGestionSoap
+from servicios.rest.gestion.DescuentosGestionRest import DescuentosGestionRest
 from webapp.decorators import admin_required, admin_required_ajax
 
 
@@ -26,7 +26,7 @@ class DescuentoView(View):
 @method_decorator(admin_required_ajax, name='dispatch')
 class DescuentoListAjaxView(View):
     def get(self, request):
-        api = DescuentoGestionSoap()
+        api = DescuentosGestionRest()
         try:
             data = api.obtener_descuentos()   # <- que devuelva TODOS, activos e inactivos
 
@@ -53,7 +53,7 @@ class DescuentoListAjaxView(View):
 class DescuentoGetAjaxView(View):
     def get(self, request, id_descuento):
 
-        api = DescuentoGestionSoap()
+        api = DescuentosGestionRest()
         try:
             data = api.obtener_descuento_por_id(id_descuento)
             return JsonResponse({"status": "ok", "data": data})
@@ -92,7 +92,7 @@ class DescuentoCreateAjaxView(View):
                   f"fechaInicio: {fechaInicio} "
                   f"fechaFin: {fechaFin} "
                   f"estado: {estado}")
-            api = DescuentoGestionSoap()
+            api = DescuentosGestionRest()
             api.crear_descuento(int(id_descuento), nombre_descuento, valor, fechaInicio, fechaFin, estado)
             return JsonResponse({"status": "ok", "message": "Descuento creado exitosamente"})
 
@@ -121,7 +121,7 @@ class DescuentoUpdateAjaxView(View):
             fechaInicio = request.POST.get("FechaInicioDescuento")
             fechaFin = request.POST.get("FechaFinDescuento")
             
-            api = DescuentoGestionSoap()
+            api = DescuentosGestionRest()
             
             # Obtener el estado actual del registro si no se envía
             estado_enviado = request.POST.get("EstadoDescuento")
@@ -149,7 +149,7 @@ class DescuentoUpdateAjaxView(View):
 @method_decorator([csrf_exempt, admin_required_ajax], name='dispatch')
 class DescuentoDeleteAjaxView(View):
     def post(self, request, id_descuento):
-        api = DescuentoGestionSoap()
+        api = DescuentosGestionRest()
         try:
             api.eliminar_descuento(id_descuento)
             return JsonResponse({"status": "ok", "message": "Descuento eliminado exitosamente"})
@@ -168,7 +168,7 @@ class DescuentoNextIdAjaxView(View):
 
     def get(self, request):
 
-        api = DescuentoGestionSoap()
+        api = DescuentosGestionRest()
 
         try:
             data = api.obtener_descuentos()
