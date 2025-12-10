@@ -5,15 +5,16 @@
 {% block css_archivos %}
 <link rel="stylesheet" href="{% static 'webapp/css/usuario/administrador/crud/crud_helper.css' %}">
 <style>
-    .badge-estado{
-        font-size:.85rem;
-        padding:.25rem .6rem;
-        border-radius:15px;
+    .badge-estado {
+        font-size: .85rem;
+        padding: .25rem .6rem;
+        border-radius: 15px;
     }
-    .readonly-input{
-        background-color:#f0f0f0 !important;
-        color:#6c757d !important;
-        cursor:not-allowed !important;
+
+    .readonly-input {
+        background-color: #f0f0f0 !important;
+        color: #6c757d !important;
+        cursor: not-allowed !important;
     }
 </style>
 {% endblock %}
@@ -74,111 +75,111 @@
 <script src="{% static 'webapp/js/usuario/administrador/crud/crud_helper.js' %}"></script>
 
 <script>
-// ================== URLs backend ==================
-const URL_LIST_USUARIO   = "/admin/usuarios-internos/list/";
-const URL_CREATE_USUARIO = "/admin/usuarios-internos/create/";
-const URL_GET_USUARIO    = id => `/admin/usuarios-internos/get/${id}/`;
-const URL_UPDATE_USUARIO = id => `/admin/usuarios-internos/update/${id}/`;
-const URL_DELETE_USUARIO = id => `/admin/usuarios-internos/delete/${id}/`;
-const URL_LIST_ROLES     = "/admin/rol/list/";
+    // ================== URLs backend ==================
+    const URL_LIST_USUARIO = "/admin/usuarios-internos/list/";
+    const URL_CREATE_USUARIO = "/admin/usuarios-internos/create/";
+    const URL_GET_USUARIO = id => `/admin/usuarios-internos/get/${id}/`;
+    const URL_UPDATE_USUARIO = id => `/admin/usuarios-internos/update/${id}/`;
+    const URL_DELETE_USUARIO = id => `/admin/usuarios-internos/delete/${id}/`;
+    const URL_LIST_ROLES = "/admin/rol/list/";
 
-let currentPage = 1;
-let totalPages  = 1;
+    let currentPage = 1;
+    let totalPages = 1;
 
-// ================== Cargar Roles ==================
-function cargarRolesEnSelect(){
-    $.ajax({
-        url: URL_LIST_ROLES,
-        method: "GET",
-        dataType: "json",
-        success: function(resp){
-            const roles = resp.data || resp.results || resp || [];
-            
-            // Limpiar y poblar ambos selects
-            $("#crear_idRol, #editar_idRol").each(function(){
-                const $select = $(this);
-                const defaultText = $select.attr("id") === "crear_idRol" 
-                    ? "Seleccione rol..." 
-                    : "Seleccione";
-                
-                $select.empty();
-                $select.append(`<option value="">${defaultText}</option>`);
-                
-                roles.forEach(r => {
-                    const idRol = r.IdRol || r.idRol || r.id;
-                    const nombreRol = r.NombreRol || r.nombreRol || r.nombre || `Rol ${idRol}`;
-                    $select.append(`<option value="${idRol}">${nombreRol}</option>`);
+    // ================== Cargar Roles ==================
+    function cargarRolesEnSelect() {
+        $.ajax({
+            url: URL_LIST_ROLES,
+            method: "GET",
+            dataType: "json",
+            success: function (resp) {
+                const roles = resp.data || resp.results || resp || [];
+
+                // Limpiar y poblar ambos selects
+                $("#crear_idRol, #editar_idRol").each(function () {
+                    const $select = $(this);
+                    const defaultText = $select.attr("id") === "crear_idRol"
+                        ? "Seleccione rol..."
+                        : "Seleccione";
+
+                    $select.empty();
+                    $select.append(`<option value="">${defaultText}</option>`);
+
+                    roles.forEach(r => {
+                        const idRol = r.IdRol || r.idRol || r.id;
+                        const nombreRol = r.NombreRol || r.nombreRol || r.nombre || `Rol ${idRol}`;
+                        $select.append(`<option value="${idRol}">${nombreRol}</option>`);
+                    });
                 });
-            });
-        },
-        error: function(xhr, status, error){
-            console.error("Error al cargar roles:", error);
-            crudNotify("error", "No se pudieron cargar los roles disponibles");
-        }
-    });
-}
+            },
+            error: function (xhr, status, error) {
+                console.error("Error al cargar roles:", error);
+                crudNotify("error", "No se pudieron cargar los roles disponibles");
+            }
+        });
+    }
 
-// ================== Paginación ==================
-function actualizarControlesPaginacion(){
-    $("#btnAnterior").prop("disabled", currentPage <= 1);
-    $("#btnSiguiente").prop("disabled", currentPage >= totalPages);
-    $("#infoPaginacion").text(`Página ${currentPage} de ${totalPages}`);
-}
+    // ================== Paginación ==================
+    function actualizarControlesPaginacion() {
+        $("#btnAnterior").prop("disabled", currentPage <= 1);
+        $("#btnSiguiente").prop("disabled", currentPage >= totalPages);
+        $("#infoPaginacion").text(`Página ${currentPage} de ${totalPages}`);
+    }
 
-function irAPaginaAnterior(){
-    if(currentPage > 1) cargarUsuariosInternos(currentPage - 1);
-}
+    function irAPaginaAnterior() {
+        if (currentPage > 1) cargarUsuariosInternos(currentPage - 1);
+    }
 
-function irAPaginaSiguiente(){
-    if(currentPage < totalPages) cargarUsuariosInternos(currentPage + 1);
-}
+    function irAPaginaSiguiente() {
+        if (currentPage < totalPages) cargarUsuariosInternos(currentPage + 1);
+    }
 
- function cargarUsuariosInternos(page = 1){
+    function cargarUsuariosInternos(page = 1) {
 
-    $.ajax({
-        url: `${URL_LIST_USUARIO}?page=${page}`,
-        method: "GET",
-        dataType: "json",
-        success: function(resp){
+        $.ajax({
+            url: `${URL_LIST_USUARIO}?page=${page}`,
+            method: "GET",
+            dataType: "json",
+            success: function (resp) {
 
-            const tbody = $("#tablaUsuariosInternos tbody");
-            tbody.empty();
+                const tbody = $("#tablaUsuariosInternos tbody");
+                tbody.empty();
 
-            // ✅ Soporta:
-            // 1) Lista directa del API Azure
-            // 2) Respuesta envuelta {data: [...]}
-            // 3) Otros formatos
-            const items = Array.isArray(resp)
-                ? resp
-                : (resp.data || resp.results || resp.items || []);
+                // ✅ Soporta:
+                // 1) Lista directa del API Azure
+                // 2) Respuesta envuelta {data: [...]}
+                // 3) Otros formatos
+                const items = Array.isArray(resp)
+                    ? resp
+                    : (resp.data || resp.results || resp.items || []);
 
-            items.forEach(u => {
+                items.forEach(u => {
 
-                const id = u.Id ?? u.id ?? "";
+                    const id = u.Id ?? u.id ?? "";
 
-                const nombre = u.Nombre || u.nombre || "";
-                const apellido = u.Apellido || u.apellido || "";
-                const correo = u.Correo || u.correo || "";
-                const documento = u.Documento || u.NumeroDocumento || u.documento || "";
-                const rol = u.NombreRol || u.rol || u.IdRol || "Sin rol";
+                    const nombre = u.Nombre || u.nombre || "";
+                    const apellido = u.Apellido || u.apellido || "";
+                    const correo = u.Correo || u.correo || "";
+                    const documento = u.Documento || u.NumeroDocumento || u.documento || "";
+                    const rol = u.NombreRol || u.rol || u.IdRol || "Sin rol";
 
-                const activo = (typeof u.Estado !== "undefined")
-                    ? !!u.Estado
-                    : (typeof u.EstadoUsuarioInterno !== "undefined")
-                        ? !!u.EstadoUsuarioInterno
-                        : true;
+                    const activo = (typeof u.Estado !== "undefined")
+                        ? !!u.Estado
+                        : (typeof u.EstadoUsuarioInterno !== "undefined")
+                            ? !!u.EstadoUsuarioInterno
+                            : true;
 
-                const rowClass = activo ? "" : "table-secondary";
+                    const rowClass = activo ? "" : "table-secondary";
 
-                const estadoBadge = activo
-                    ? '<span class="badge bg-success badge-estado">Activo</span>'
-                    : '<span class="badge bg-secondary badge-estado">Inactivo</span>';
+                    const estadoBadge = activo
+                        ? '<span class="badge bg-success badge-estado">Activo</span>'
+                        : '<span class="badge bg-secondary badge-estado">Inactivo</span>';
 
-                const btnEliminar = activo
-                    ? `<button class="btn btn-danger btn-sm" onclick="eliminarUsuario('${id}')">Eliminar</button>`
-                    : `<button class="btn btn-secondary btn-sm" disabled>Eliminado</button>`;
+                    const btnEliminar = activo
+                        ? `<button class="btn btn-danger btn-sm" onclick="eliminarUsuario('${id}')">Eliminar</button>`
+                        : `<button class="btn btn-secondary btn-sm" disabled>Eliminado</button>`;
 
-                const rowHtml = `
+                    const rowHtml = `
                     <tr class="${rowClass}">
                         <td class="fw-bold">${id}</td>
                         <td>${nombre}</td>
@@ -196,205 +197,279 @@ function irAPaginaSiguiente(){
                         </td>
                     </tr>
                 `;
-                tbody.append(rowHtml);
-            });
+                    tbody.append(rowHtml);
+                });
 
-            // ✅ Si tu backend aun no pagina usuarios, esto evita romper UI
-            currentPage = resp.page ?? 1;
-            totalPages  = resp.total_pages ?? 1;
+                // ✅ Si tu backend aun no pagina usuarios, esto evita romper UI
+                currentPage = resp.page ?? 1;
+                totalPages = resp.total_pages ?? 1;
 
-            // Si viene lista directa, dejamos paginacion en 1
-            if (Array.isArray(resp)) {
-                currentPage = 1;
-                totalPages = 1;
+                // Si viene lista directa, dejamos paginacion en 1
+                if (Array.isArray(resp)) {
+                    currentPage = 1;
+                    totalPages = 1;
+                }
+
+                actualizarControlesPaginacion();
+            },
+            error: function (xhr) {
+                crudNotify(
+                    "error",
+                    xhr.responseJSON?.message || "No se pudo cargar la información de usuarios internos."
+                );
+            }
+        });
+    }
+
+
+    // ================== Crear ==================
+    function abrirModalCrearUsuario() {
+        $("#crear_nombre").val("");
+        $("#crear_apellido").val("");
+        $("#crear_correo").val("");
+        $("#crear_idRol").val("");
+        $("#crear_tipoDoc").val("");
+        $("#crear_documento").val("");
+        $("#crear_clave").val("");
+        $("#crear_fechaNac").val("");
+        $("#crear_estado").prop("checked", true);
+
+        $("#modalCrearUsuario").modal("show");
+    }
+
+    function crearUsuarioInterno() {
+
+        const nombre = $("#crear_nombre").val().trim();
+        const apellido = $("#crear_apellido").val().trim();
+        const correo = $("#crear_correo").val().trim();
+        const id_rol = $("#crear_idRol").val();
+        const tipo_doc = $("#crear_tipoDoc").val().trim();
+        const documento = $("#crear_documento").val().trim();
+        const clave = $("#crear_clave").val().trim();
+        const fecha_nac = $("#crear_fechaNac").val();
+        const estado = $("#crear_estado").is(":checked");
+
+        if (!nombre || !apellido || !correo || !id_rol) {
+            crudNotify("warning", "Nombre, Apellido, Correo y Rol son obligatorios.");
+            return;
+        }
+
+        const payload = {
+            nombre: nombre,
+            apellido: apellido,
+            correo: correo,
+            id_rol: parseInt(id_rol),
+            tipo_documento: tipo_doc || null,
+            documento: documento || null,
+            clave: clave || null,
+            fecha_nacimiento: fecha_nac || null,
+            estado: estado
+        };
+
+        crudCreate(
+            URL_CREATE_USUARIO,
+            payload,
+            () => {
+                $("#modalCrearUsuario").modal("hide");
+                cargarUsuariosInternos(currentPage);
+            }
+        );
+    }
+
+    // ================== Editar ==================
+    function abrirModalEditarUsuario(id) {
+
+        $.get(URL_GET_USUARIO(id), function (resp) {
+
+            // ✅ Soporta respuesta envuelta o directa
+            // Si existe status y es error, ahí sí paramos
+            if (resp?.status && resp.status !== "ok") {
+                return crudNotify("error", resp.message || "No se pudo cargar el usuario.");
             }
 
-            actualizarControlesPaginacion();
-        },
-        error: function(xhr){
-            crudNotify(
-                "error",
-                xhr.responseJSON?.message || "No se pudo cargar la información de usuarios internos."
-            );
-        }
-    });
-}
+            const u = resp?.data ?? resp ?? {};
 
+            // ✅ Campos reales del API
+            const idUsuario = u.Id ?? u.IdUsuarioInterno ?? u.id ?? "";
+            const idRol = u.IdRol ?? u.idRol ?? "";
+            const nombre = u.Nombre ?? u.NombreUsuarioInterno ?? u.nombre ?? "";
+            const apellido = u.Apellido ?? u.ApellidoUsuarioInterno ?? u.apellido ?? "";
+            const correo = u.Correo ?? u.CorreoUsuarioInterno ?? u.correo ?? "";
+            const tipo_doc = u.TipoDocumento ?? u.tipo_doc ?? "";
+            const documento = u.Documento ?? u.NumeroDocumento ?? u.documento ?? "";
+            const fechaNac = u.FechaNacimiento ?? u.fechaNacimiento ?? null;
 
-// ================== Crear ==================
-function abrirModalCrearUsuario(){
-    $("#crear_nombre").val("");
-    $("#crear_apellido").val("");
-    $("#crear_correo").val("");
-    $("#crear_idRol").val("");
-    $("#crear_tipoDoc").val("");
-    $("#crear_documento").val("");
-    $("#crear_clave").val("");
-    $("#crear_fechaNac").val("");
-    $("#crear_estado").prop("checked", true);
-    
-    $("#modalCrearUsuario").modal("show");
-}
+            const activo = (typeof u.Estado !== "undefined")
+                ? !!u.Estado
+                : (typeof u.EstadoUsuarioInterno !== "undefined")
+                    ? !!u.EstadoUsuarioInterno
+                    : true;
 
-function crearUsuarioInterno(){
+            // ✅ Llenar modal
+            $("#editar_IdUsuarioInterno").val(idUsuario);
+            $("#editar_idRol").val(idRol);
+            $("#editar_nombre").val(nombre);
+            $("#editar_apellido").val(apellido);
+            $("#editar_correo").val(correo);
+            $("#editar_tipoDoc").val(tipo_doc);
+            $("#editar_documento").val(documento);
+            $("#editar_estado").prop("checked", activo);
 
-    const nombre = $("#crear_nombre").val().trim();
-    const apellido = $("#crear_apellido").val().trim();
-    const correo = $("#crear_correo").val().trim();
-    const id_rol = $("#crear_idRol").val();
-    const tipo_doc = $("#crear_tipoDoc").val().trim();
-    const documento = $("#crear_documento").val().trim();
-    const clave = $("#crear_clave").val().trim();
-    const fecha_nac = $("#crear_fechaNac").val();
-    const estado = $("#crear_estado").is(":checked");
+            // ✅ Fecha en formato input[type=date]
+            if (fechaNac) {
+                // soporta "2025-01-01T00:00:00" o "2025-01-01"
+                const onlyDate = String(fechaNac).substring(0, 10);
+                $("#editar_fechaNac").val(onlyDate);
+            } else {
+                $("#editar_fechaNac").val("");
+            }
 
-    if(!nombre || !apellido || !correo || !id_rol){
-        crudNotify("warning","Nombre, Apellido, Correo y Rol son obligatorios.");
-        return;
-    }
+            // ✅ Clave siempre vacía (solo se cambia si el user escribe)
+            $("#editar_clave").val("");
 
-    const payload = {
-        nombre: nombre,
-        apellido: apellido,
-        correo: correo,
-        id_rol: parseInt(id_rol),
-        tipo_documento: tipo_doc || null,
-        documento: documento || null,
-        clave: clave || null,
-        fecha_nacimiento: fecha_nac || null,
-        estado: estado
-    };
-
-    crudCreate(
-        URL_CREATE_USUARIO,
-        payload,
-        () => {
-            $("#modalCrearUsuario").modal("hide");
-            cargarUsuariosInternos(currentPage);
-        }
-    );
-}
-
-// ================== Editar ==================
-function abrirModalEditarUsuario(id){
-
-    $.get(URL_GET_USUARIO(id), function(resp){
-
-        // ✅ Soporta respuesta envuelta o directa
-        // Si existe status y es error, ahí sí paramos
-        if (resp?.status && resp.status !== "ok") {
-            return crudNotify("error", resp.message || "No se pudo cargar el usuario.");
-        }
-
-        const u = resp?.data ?? resp ?? {};
-
-        // ✅ Campos reales del API
-        const idUsuario = u.Id ?? u.IdUsuarioInterno ?? u.id ?? "";
-        const idRol     = u.IdRol ?? u.idRol ?? "";
-        const nombre    = u.Nombre ?? u.NombreUsuarioInterno ?? u.nombre ?? "";
-        const apellido  = u.Apellido ?? u.ApellidoUsuarioInterno ?? u.apellido ?? "";
-        const correo    = u.Correo ?? u.CorreoUsuarioInterno ?? u.correo ?? "";
-        const tipo_doc  = u.TipoDocumento ?? u.tipo_doc ?? "";
-        const documento = u.Documento ?? u.NumeroDocumento ?? u.documento ?? "";
-        const fechaNac  = u.FechaNacimiento ?? u.fechaNacimiento ?? null;
-
-        const activo = (typeof u.Estado !== "undefined")
-            ? !!u.Estado
-            : (typeof u.EstadoUsuarioInterno !== "undefined")
-                ? !!u.EstadoUsuarioInterno
-                : true;
-
-        // ✅ Llenar modal
-        $("#editar_IdUsuarioInterno").val(idUsuario);
-        $("#editar_idRol").val(idRol);
-        $("#editar_nombre").val(nombre);
-        $("#editar_apellido").val(apellido);
-        $("#editar_correo").val(correo);
-        $("#editar_tipoDoc").val(tipo_doc);
-        $("#editar_documento").val(documento);
-        $("#editar_estado").prop("checked", activo);
-
-        // ✅ Fecha en formato input[type=date]
-        if (fechaNac) {
-            // soporta "2025-01-01T00:00:00" o "2025-01-01"
-            const onlyDate = String(fechaNac).substring(0, 10);
-            $("#editar_fechaNac").val(onlyDate);
-        } else {
-            $("#editar_fechaNac").val("");
-        }
-
-        // ✅ Clave siempre vacía (solo se cambia si el user escribe)
-        $("#editar_clave").val("");
-
-        $("#modalEditarUsuario").modal("show");
-    })
-    .fail(xhr => {
-        crudNotify("error", xhr.responseJSON?.message || "Error al obtener datos para edición.");
-    });
-}
-
-function actualizarUsuarioInterno(){
-
-    const idUsuario = $("#editar_IdUsuarioInterno").val();
-    const id_rol = $("#editar_idRol").val();
-    const nombre = $("#editar_nombre").val().trim();
-    const apellido = $("#editar_apellido").val().trim();
-    const correo = $("#editar_correo").val().trim();
-    const tipo_doc = $("#editar_tipoDoc").val().trim();
-    const documento = $("#editar_documento").val().trim();
-    const clave = $("#editar_clave").val().trim();
-    const fecha_nac = $("#editar_fechaNac").val();
-    const estado = $("#editar_estado").is(":checked");
-
-    if(!nombre || !apellido || !correo || !id_rol){
-        crudNotify("warning", "Nombre, Apellido, Correo y Rol son obligatorios.");
-        return;
-    }
-
-    const payload = {
-        nombre: nombre,
-        apellido: apellido,
-        correo: correo,
-        id_rol: parseInt(id_rol),
-        tipo_documento: tipo_doc || null,
-        documento: documento || null,
-        fecha_nacimiento: fecha_nac || null,
-        estado: estado
-    };
-    
-    // Solo enviar clave si se escribió algo
-    if(clave){
-        payload.clave = clave;
-    }
-
-    crudUpdate(
-        URL_UPDATE_USUARIO(idUsuario),
-        payload,
-        () => {
-            $("#modalEditarUsuario").modal("hide");
-            cargarUsuariosInternos(currentPage);
-        }
-    );
-}
-
-// ================== Eliminar ==================
-function eliminarUsuario(id){
-    crudConfirm("¿Está seguro de eliminar este usuario interno? Esto lo marcará como inactivo.")
-        .then(ok => {
-            if(!ok) return;
-
-            crudDelete(URL_DELETE_USUARIO(id), () => {
-                cargarUsuariosInternos(currentPage);
+            $("#modalEditarUsuario").modal("show");
+        })
+            .fail(xhr => {
+                crudNotify("error", xhr.responseJSON?.message || "Error al obtener datos para edición.");
             });
-        });
-}
+    }
 
-// ================== INIT ==================
-$(document).ready(function(){
-    cargarRolesEnSelect();  // ✅ Cargar roles al inicio
-    cargarUsuariosInternos(1);
-    $("#btnAnterior").on("click", irAPaginaAnterior);
-    $("#btnSiguiente").on("click", irAPaginaSiguiente);
-});
+    function actualizarUsuarioInterno() {
+
+        const idUsuario = $("#editar_IdUsuarioInterno").val();
+        const id_rol = $("#editar_idRol").val();
+        const nombre = $("#editar_nombre").val().trim();
+        const apellido = $("#editar_apellido").val().trim();
+        const correo = $("#editar_correo").val().trim();
+        const tipo_doc = $("#editar_tipoDoc").val().trim();
+        const documento = $("#editar_documento").val().trim();
+        const clave = $("#editar_clave").val().trim();
+        const fecha_nac = $("#editar_fechaNac").val();
+        const estado = $("#editar_estado").is(":checked");
+
+        if (!nombre || !apellido || !correo || !id_rol) {
+            crudNotify("warning", "Nombre, Apellido, Correo y Rol son obligatorios.");
+            return;
+        }
+
+        const payload = {
+            nombre: nombre,
+            apellido: apellido,
+            correo: correo,
+            id_rol: parseInt(id_rol),
+            tipo_documento: tipo_doc || null,
+            documento: documento || null,
+            fecha_nacimiento: fecha_nac || null,
+            estado: estado
+        };
+
+        // Solo enviar clave si se escribió algo
+        if (clave) {
+            payload.clave = clave;
+        }
+
+        crudUpdate(
+            URL_UPDATE_USUARIO(idUsuario),
+            payload,
+            () => {
+                $("#modalEditarUsuario").modal("hide");
+                cargarUsuariosInternos(currentPage);
+            }
+        );
+    }
+
+    // ================== Eliminar ==================
+    function eliminarUsuario(id) {
+        crudConfirm("¿Está seguro de eliminar este usuario interno? Esto lo marcará como inactivo.")
+            .then(ok => {
+                if (!ok) return;
+
+                crudDelete(URL_DELETE_USUARIO(id), () => {
+                    cargarUsuariosInternos(currentPage);
+                });
+            });
+    }
+
+    // ================== INIT ==================
+    $(document).ready(function () {
+        cargarRolesEnSelect();  // ✅ Cargar roles al inicio
+        cargarUsuariosInternos(1);
+        $("#btnAnterior").on("click", irAPaginaAnterior);
+        $("#btnSiguiente").on("click", irAPaginaSiguiente);
+
+        // ================== VALIDACIONES EN TIEMPO REAL ==================
+
+        /* Función que valida nombre/apellido: solo letras, espacios y acentos */
+        function validarSoloLetras(input) {
+            const original = input.value;
+            // Eliminar cualquier carácter que no sea letra, espacio o acento
+            const soloLetras = original.replace(/[^A-Za-zÁÉÍÓÚáéíóúÑñ ]/g, "");
+
+            // Si hubo cambios, actualizar el valor
+            if (original !== soloLetras) {
+                input.value = soloLetras;
+            }
+        }
+
+        /* Función que valida contraseña: sin espacios */
+        function validarSinEspacios(input) {
+            const original = input.value;
+            // Eliminar todos los espacios
+            const sinEspacios = original.replace(/\s/g, '');
+
+            // Si hubo cambios, actualizar el valor
+            if (original !== sinEspacios) {
+                input.value = sinEspacios;
+            }
+        }
+
+        // APLICAR VALIDACIONES A LOS INPUTS DE CREAR
+        $("#crear_nombre, #crear_apellido").on("input", function () {
+            validarSoloLetras(this);
+        });
+
+        $("#crear_clave").on("input", function () {
+            validarSinEspacios(this);
+        });
+
+        // Prevenir espacios en contraseña al presionar tecla
+        $("#crear_clave").on("keypress", function (e) {
+            if (e.key === ' ' || e.keyCode === 32) {
+                e.preventDefault();
+            }
+        });
+
+        // Limpiar espacios en contraseña al pegar
+        $("#crear_clave").on("paste", function (e) {
+            e.preventDefault();
+            const text = (e.originalEvent.clipboardData || window.clipboardData).getData('text');
+            const textSinEspacios = text.replace(/\s/g, '');
+            document.execCommand('insertText', false, textSinEspacios);
+        });
+
+        // APLICAR VALIDACIONES A LOS INPUTS DE EDITAR
+        $("#editar_nombre, #editar_apellido").on("input", function () {
+            validarSoloLetras(this);
+        });
+
+        $("#editar_clave").on("input", function () {
+            validarSinEspacios(this);
+        });
+
+        // Prevenir espacios en contraseña al presionar tecla
+        $("#editar_clave").on("keypress", function (e) {
+            if (e.key === ' ' || e.keyCode === 32) {
+                e.preventDefault();
+            }
+        });
+
+        // Limpiar espacios en contraseña al pegar
+        $("#editar_clave").on("paste", function (e) {
+            e.preventDefault();
+            const text = (e.originalEvent.clipboardData || window.clipboardData).getData('text');
+            const textSinEspacios = text.replace(/\s/g, '');
+            document.execCommand('insertText', false, textSinEspacios);
+        });
+    });
 </script>
 {% endblock %}

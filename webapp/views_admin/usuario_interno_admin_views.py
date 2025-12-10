@@ -90,8 +90,18 @@ class UsuarioInternoCreateAjaxView(View):
             if not nombre or nombre.isspace():
                 return JsonResponse({"status": "error", "message": "El nombre es obligatorio y no puede ser solo espacios"}, status=400)
             
+            # Validar que nombre solo contenga letras, espacios y acentos (sin números)
+            nombre_regex = r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$'
+            if not re.match(nombre_regex, nombre):
+                return JsonResponse({"status": "error", "message": "El nombre solo puede contener letras, espacios y acentos (sin números)"}, status=400)
+            
             if not apellido or apellido.isspace():
                 return JsonResponse({"status": "error", "message": "El apellido es obligatorio y no puede ser solo espacios"}, status=400)
+            
+            # Validar que apellido solo contenga letras, espacios y acentos (sin números)
+            apellido_regex = r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$'
+            if not re.match(apellido_regex, apellido):
+                return JsonResponse({"status": "error", "message": "El apellido solo puede contener letras, espacios y acentos (sin números)"}, status=400)
             
             if not correo or "@" not in correo:
                 return JsonResponse({"status": "error", "message": "El correo debe ser válido y contener @"}, status=400)
@@ -115,13 +125,18 @@ class UsuarioInternoCreateAjaxView(View):
                 if len(documento) < 5 or len(documento) > 20:
                     return JsonResponse({"status": "error", "message": "El pasaporte debe tener entre 5 y 20 caracteres"}, status=400)
             
+            # Validar que la clave no contenga espacios
+            clave = request.POST.get("clave", "").strip()
+            if clave and ' ' in clave:
+                return JsonResponse({"status": "error", "message": "La contraseña no puede contener espacios"}, status=400)
+            
             dto = {
                 "Id": 0,
                 "IdRol": int(request.POST.get("id_rol")),
                 "Nombre": nombre,
                 "Apellido": apellido,
                 "Correo": correo,
-                "Clave": request.POST.get("clave"),  # Texto plano
+                "Clave": clave or None,  # Usar la clave validada
                 "Estado": request.POST.get("estado") == "true",
                 "FechaNacimiento": request.POST.get("fecha_nacimiento") or None,
                 "TipoDocumento": tipo_doc or None,
@@ -161,8 +176,18 @@ class UsuarioInternoUpdateAjaxView(View):
             if not nombre or nombre.isspace():
                 return JsonResponse({"status": "error", "message": "El nombre es obligatorio y no puede ser solo espacios"}, status=400)
             
+            # Validar que nombre solo contenga letras, espacios y acentos (sin números)
+            nombre_regex = r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$'
+            if not re.match(nombre_regex, nombre):
+                return JsonResponse({"status": "error", "message": "El nombre solo puede contener letras, espacios y acentos (sin números)"}, status=400)
+            
             if not apellido or apellido.isspace():
                 return JsonResponse({"status": "error", "message": "El apellido es obligatorio y no puede ser solo espacios"}, status=400)
+            
+            # Validar que apellido solo contenga letras, espacios y acentos (sin números)
+            apellido_regex = r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$'
+            if not re.match(apellido_regex, apellido):
+                return JsonResponse({"status": "error", "message": "El apellido solo puede contener letras, espacios y acentos (sin números)"}, status=400)
             
             if not correo or "@" not in correo:
                 return JsonResponse({"status": "error", "message": "El correo debe ser válido y contener @"}, status=400)
@@ -186,6 +211,11 @@ class UsuarioInternoUpdateAjaxView(View):
                 if len(documento) < 5 or len(documento) > 20:
                     return JsonResponse({"status": "error", "message": "El pasaporte debe tener entre 5 y 20 caracteres"}, status=400)
             
+            # Validar que la clave no contenga espacios (solo si se está cambiando)
+            clave = request.POST.get("clave", "").strip()
+            if clave and ' ' in clave:
+                return JsonResponse({"status": "error", "message": "La contraseña no puede contener espacios"}, status=400)
+            
             # Obtener el estado actual del registro si no se envía
             estado_enviado = request.POST.get("estado")
             if estado_enviado is not None:
@@ -201,7 +231,7 @@ class UsuarioInternoUpdateAjaxView(View):
                 "Nombre": nombre,
                 "Apellido": apellido,
                 "Correo": correo,
-                "Clave": request.POST.get("clave"),  # Vacío = no cambiar
+                "Clave": clave or None,  # Vacío = no cambiar
                 "Estado": estado,
                 "FechaNacimiento": request.POST.get("fecha_nacimiento") or None,
                 "TipoDocumento": tipo_doc or None,
